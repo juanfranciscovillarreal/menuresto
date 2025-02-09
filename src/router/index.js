@@ -37,36 +37,110 @@
 
 import { createMemoryHistory, createRouter } from 'vue-router'
 
-import Drawer from '../components/Drawer.vue'
-import HelloWorld from '../components/HelloWorld.vue'
-import Menu from '../components/Menu.vue'
+import Inicio from '../pages/Inicio.vue'
+import Menu from '../pages/Menu.vue'
+import MenuDetalle from '../pages/MenuDetalle.vue'
+import Favoritos from '../pages/Favoritos.vue'
+import Orden from '../pages/Orden.vue'
+import Principal from '../pages/Principal.vue'
+import Contacto from '../pages/Contacto.vue'
+import WiFi from '../pages/WiFi.vue'
+import Casa from '../pages/Casa.vue'
+import Ajustes from '../pages/Ajustes.vue'
+import Acerca from '../pages/Acerca.vue'
+import Pedido from '../pages/Pedido.vue'
 
 const routes = [
   {
-    path: '/', component: Drawer, children: [
+    path: '/',
+    component: Casa,
+    children: [
       {
-        path: 'HelloWorld',
-        component: HelloWorld,
+        path: '/Inicio',
+        component: Inicio,
       },
       {
-        path: 'Menu',
-        component: Menu,
+        path: '/WiFi',
+        component: WiFi,
       },
-      // {
-      //   // UserPosts will be rendered inside User's <router-view>
-      //   // when /user/:id/posts is matched
-      //   path: 'posts',
-      //   component: UserPosts,
-      // },
+      {
+        path: '/Contacto',
+        component: Contacto,
+      },
+      {
+        path: '/Ajustes',
+        component: Ajustes,
+      },
+      {
+        path: '/Acerca',
+        component: Acerca,
+      },
+      {
+        path: '/Principal',
+        component: Principal,
+        children: [
+          {
+            path: '/Menu',
+            component: Menu,
+            children: [
+              {
+                path: 'MenuDetalle/:id',
+                component: MenuDetalle,
+              },
+            ]
+          },
+          {
+            path: '/Favoritos',
+            component: Favoritos,
+          },
+          {
+            path: '/Orden',
+            component: Orden,
+          },
+          {
+            path: '/Pedido',
+            component: Pedido,
+          },
+        ],
+      },
     ],
   },
-
-  // { path: '/HelloWorld', component: HelloWorld },
+  // {
+  //   path: '/MenuDetalle/:id',
+  //   component: MenuDetalle,
+  // },
 ]
 
 const router = createRouter({
   history: createMemoryHistory(),
   routes,
+})
+
+router.beforeEach((to, from, next) => {
+  // console.log(`BeforeEach: ${JSON.stringify(to)}`);
+  if (to.path == '/Inicio') {
+    // console.log('Inicio');
+  }
+  next();
+
+  //   try {
+  //     next();
+  //     if (to.name == null) { // La ruta no existe
+  //       return { name: 'Inicio' }
+  //       //   if(from.name == 'Inicio'){ // NavigationDuplicated
+  //       //     return false;
+  //       //   }
+  //       //   else{
+  //       //     router.push('/');
+  //       //     console.log(`La ruta ${to.path} no existe!`)
+  //       //   }
+  //     }
+  //     else {
+  //       next();
+  //     }
+  //   } catch (error) {
+  //     console.log(`Error en router: ${error}`)
+  //   }
 })
 
 export default router

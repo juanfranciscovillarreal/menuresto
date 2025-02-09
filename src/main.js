@@ -15,6 +15,12 @@ import { createApp } from 'vue'
 
 const app = createApp(App)
 
+app.config.globalProperties.$filters = {
+    toPesos(value) {
+        return Intl.NumberFormat('es-AR', {currency: 'ars', style: 'currency'}).format(value);
+    }
+}
+
 registerPlugins(app)
 
 app.mount('#app')

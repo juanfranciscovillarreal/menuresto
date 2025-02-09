@@ -1,8 +1,9 @@
 <template>
-  <v-sheet class="mx-auto" max-width="600">
-    <v-slide-group :show-arrows="false" :mobile="true" mobile-breakpoint="xs">
-      <v-slide-group-item v-for="[text, icon, link]  in categorias" v-slot="{ isSelected, toggle }">
-        <v-btn :color="isSelected ? 'primary' : undefined" class="ma-2" rounded @click="toggle">
+  <v-sheet class="mt-2">
+    <v-slide-group :show-arrows="false" :mobile="true" mobile-breakpoint="xs" center-active v-model="model">
+      <v-slide-group-item v-for="[id, text, icon] in categoriasStore.categorias" v-slot="{ isSelected = true, toggle }">
+
+        <v-btn :color="isSelected ? 'primary' : undefined" class="ma-2" rounded @click="$emit('someEvent', toggle, id)">
           {{ text }}
         </v-btn>
       </v-slide-group-item>
@@ -11,25 +12,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import { useCategoriasStore } from "../stores/categorias";
 
-const count = ref(0)
-const categorias = ref([
-  ["Entradas", "mdi-account-school", "/HelloWorld"],
-  ["Tablas", "mdi-numeric-10-box-outline", "/calificaciones"],
-  ["Platos principales", "mdi-account-box", "/contactos"],
-  ["Pastas", "mdi-chair-school", "/cursos"],
-  ["Pizzas", "mdi-human-male-board", "/docentes"],
-  ["Sandwiches", "mdi-calendar", "/eventos"],
-  ["Ensaladas", "mdi-account-plus", "/asistencias"],
-  ["Niños", "mdi-account-minus", "/inasistencias"],
-  ["Postres", "mdi-email", "/notificaciones"],
-  ["Café", "mdi-account-alert", "/sanciones"],
-  ["Bebidas", "mdi-trending-up", "/trayectorias"],
-  ["Cervezas", "mdi-trending-up", "/trayectorias"],
-  ["Vinos", "mdi-trending-up", "/trayectorias"],
-],)
-function increment() {
-  count.value++
-}
+const categoriasStore = useCategoriasStore()
+const model = ref(0)
+
+onMounted(() => {
+  model.value = categoriasStore.seleccionada;
+})
+
 </script>

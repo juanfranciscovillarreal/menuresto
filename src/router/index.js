@@ -40,7 +40,6 @@ import { createMemoryHistory, createRouter } from 'vue-router'
 import Inicio from '../pages/Inicio.vue'
 import Menu from '../pages/Menu.vue'
 import MenuDetalle from '../pages/MenuDetalle.vue'
-import Favoritos from '../pages/Favoritos.vue'
 import Principal from '../pages/Principal.vue'
 import Contacto from '../pages/Contacto.vue'
 import WiFi from '../pages/WiFi.vue'
@@ -48,6 +47,7 @@ import Casa from '../pages/Casa.vue'
 import Ajustes from '../pages/Ajustes.vue'
 import Acerca from '../pages/Acerca.vue'
 import Pedido from '../pages/Pedido.vue'
+import LeerQR from '../pages/LeerQR.vue'
 
 const routes = [
   {
@@ -82,28 +82,24 @@ const routes = [
             path: '/Menu',
             component: Menu,
             children: [
-              {
-                path: 'MenuDetalle/:id',
-                component: MenuDetalle,
-              },
+              // {
+              //   path: 'MenuDetalle/:id',
+              //   component: MenuDetalle,
+              // },
             ]
-          },
-          {
-            path: '/Favoritos',
-            component: Favoritos,
           },
           {
             path: '/Pedido',
             component: Pedido,
           },
+          {
+            path: '/LeerQR',
+            component: LeerQR,
+          },
         ],
       },
     ],
   },
-  // {
-  //   path: '/MenuDetalle/:id',
-  //   component: MenuDetalle,
-  // },
 ]
 
 const router = createRouter({

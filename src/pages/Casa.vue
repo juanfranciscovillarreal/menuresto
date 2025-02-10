@@ -9,7 +9,11 @@
     <v-spacer></v-spacer>
 
     <v-btn v-if="route.path == '/Pedido'" icon>
-      <v-icon @click="generarQR()">mdi-qrcode</v-icon>
+      <v-icon @click="generarQR()">mdi-share</v-icon>
+    </v-btn>
+
+    <v-btn v-if="route.path == '/Pedido'" icon>
+      <v-icon @click="router.push('/LeerQR')">mdi-qrcode-scan</v-icon>
     </v-btn>
 
     <!-- Cerrar búsqueda-->
@@ -97,19 +101,29 @@
     <router-view />
   </v-main>
 
-  <template>
-    <div class="text-center pa-4">
-      <v-dialog v-model="verQR" width="auto">
-        <v-card max-width="400" title="Comparta su pedido" class="text-center">
-          <vue-qrcode :value="qrValue" :width="300" type="image/png" :color="{ dark: '#000000ff' }" :margin="6"
-            :scale="4" />
-          <template v-slot:actions>
-            <v-btn class="ms-auto" text="Cerrar" @click="verQR = false"></v-btn>
-          </template>
-        </v-card>
-      </v-dialog>
-    </div>
-  </template>
+  <div class="text-center pa-4">
+    <v-dialog v-model="verQR" width="auto" color="error">
+      <v-card max-width="400" class="text-center">
+
+        <v-card-title v-if="menuStore.pedido.length > 0" class="bg-green-lighten-2">
+          Comparta su pedido
+        </v-card-title>
+
+        <v-card-title v-else class="bg-red-lighten-2">
+          Pedido vacío
+        </v-card-title>
+
+        <vue-qrcode v-if="menuStore.pedido.length > 0" :value="qrValue" :width="300" type="image/png"
+          :color="{ dark: '#000000ff' }" :margin="6" :scale="4" />
+        <v-card-text v-else="menuStore.pedido.length = 0">
+          Seleccione algún item del menú
+        </v-card-text>
+        <template v-slot:actions>
+          <v-btn class="ms-auto" text="Cerrar" @click="verQR = false"></v-btn>
+        </template>
+      </v-card>
+    </v-dialog>
+  </div>
 
 </template>
 

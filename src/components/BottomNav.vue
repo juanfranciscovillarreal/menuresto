@@ -27,9 +27,7 @@ const value = ref(0)
 const menuStore = useMenuStore()
 
 onMounted(() => {
-    if (route.path.includes('MenuDetalle')) {
-        // console.log(route.path)
-    }
+
 })
 
 </script>

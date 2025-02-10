@@ -3,18 +3,19 @@ import { defineStore } from 'pinia'
 export const useMenuStore = defineStore('menu', () => {
   // Estados
   const count = ref(0)
+  const total = ref(0)
 
   const menuFiltrado = ref([])
   const menuCompleto = ref([
-    { id: 1,  esCategoria: true, id_categoria: 1, title: 'Entradas', precio: '', subtotal: 0, cantidad: 0, favorito: false, photo: '' },
-    { id: 2,  esCategoria: false, id_categoria: 1, title: 'Papas Fritas', precio: '10000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.cocinaygastronomia.com/wp-content/uploads/2012/03/photodune-1669472-french-fries-xs.jpg' },
-    { id: 3,  esCategoria: false, id_categoria: 1, title: 'Rabas', precio: '8000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.clarin.com/img/1969/12/31/HJxb_FuAQe_1256x620__1.jpg' },
-    { id: 4,  esCategoria: true, id_categoria: 3, title: 'Tablas', precio: '', subtotal: 0, cantidad: 0, favorito: false, photo: '' },
-    { id: 5,  esCategoria: false, id_categoria: 3, title: 'Para 2 peronas', precio: '10000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.cocinaygastronomia.com/wp-content/uploads/2012/03/photodune-1669472-french-fries-xs.jpg' },
-    { id: 6,  esCategoria: false, id_categoria: 3, title: 'Para 4 personas', precio: '8000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.clarin.com/img/1969/12/31/HJxb_FuAQe_1256x620__1.jpg' },    
-    { id: 7,  esCategoria: false, id_categoria: 1, title: 'Entradas', precio: '', subtotal: 0, cantidad: 0, favorito: false, photo: '' },
-    { id: 8,  esCategoria: false, id_categoria: 1, title: 'Papas Fritas', precio: '10000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.cocinaygastronomia.com/wp-content/uploads/2012/03/photodune-1669472-french-fries-xs.jpg' },
-    { id: 9,  esCategoria: false, id_categoria: 1, title: 'Rabas', precio: '8000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.clarin.com/img/1969/12/31/HJxb_FuAQe_1256x620__1.jpg' },
+    { id: 1, esCategoria: true, id_categoria: 1, title: 'Entradas', precio: '', subtotal: 0, cantidad: 0, favorito: false, photo: '' },
+    { id: 2, esCategoria: false, id_categoria: 1, title: 'Papas Fritas', precio: '10000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.cocinaygastronomia.com/wp-content/uploads/2012/03/photodune-1669472-french-fries-xs.jpg' },
+    { id: 3, esCategoria: false, id_categoria: 1, title: 'Rabas', precio: '8000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.clarin.com/img/1969/12/31/HJxb_FuAQe_1256x620__1.jpg' },
+    { id: 4, esCategoria: true, id_categoria: 3, title: 'Tablas', precio: '', subtotal: 0, cantidad: 0, favorito: false, photo: '' },
+    { id: 5, esCategoria: false, id_categoria: 3, title: 'Para 2 peronas', precio: '10000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.cocinaygastronomia.com/wp-content/uploads/2012/03/photodune-1669472-french-fries-xs.jpg' },
+    { id: 6, esCategoria: false, id_categoria: 3, title: 'Para 4 personas', precio: '8000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.clarin.com/img/1969/12/31/HJxb_FuAQe_1256x620__1.jpg' },
+    { id: 7, esCategoria: false, id_categoria: 1, title: 'Entradas', precio: '', subtotal: 0, cantidad: 0, favorito: false, photo: '' },
+    { id: 8, esCategoria: false, id_categoria: 1, title: 'Papas Fritas', precio: '10000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.cocinaygastronomia.com/wp-content/uploads/2012/03/photodune-1669472-french-fries-xs.jpg' },
+    { id: 9, esCategoria: false, id_categoria: 1, title: 'Rabas', precio: '8000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.clarin.com/img/1969/12/31/HJxb_FuAQe_1256x620__1.jpg' },
     { id: 10, esCategoria: false, id_categoria: 1, title: 'Entradas', precio: '', subtotal: 0, cantidad: 0, favorito: false, photo: '' },
     { id: 11, esCategoria: false, id_categoria: 1, title: 'Papas Fritas', precio: '10000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.cocinaygastronomia.com/wp-content/uploads/2012/03/photodune-1669472-french-fries-xs.jpg' },
     { id: 12, esCategoria: false, id_categoria: 1, title: 'Rabas', precio: '8000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://www.clarin.com/img/1969/12/31/HJxb_FuAQe_1256x620__1.jpg' },
@@ -37,7 +38,8 @@ export const useMenuStore = defineStore('menu', () => {
     { id: 29, esCategoria: false, id_categoria: 2, title: 'Ravioles', precio: '20000.50', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://images.getrecipekit.com/20220119164123-ravioles-de-verdura-con-salsa-rosa.png' },
     { id: 30, esCategoria: false, id_categoria: 2, title: 'Ñoquis', precio: '18000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://cocinalocal.cl/wp-content/uploads/2022/11/Noquis-de-papa-italianos.jpeg' },
     { id: 31, esCategoria: false, id_categoria: 2, title: 'Cookies', precio: '6000.00', subtotal: 0, cantidad: 0, favorito: false, photo: 'https://i.ytimg.com/vi/g9mKC-lx70A/maxresdefault.jpg' },
-])
+  ])
+  const pedido = ref([])
 
   // Getters
   const duplicar = computed(() => count.value * 2)
@@ -47,12 +49,15 @@ export const useMenuStore = defineStore('menu', () => {
     count.value++
   }
 
-  return { 
-    count, 
+  return {
+    count,
+    total,
     menuFiltrado,
     menuCompleto,
-    duplicar, 
-    incrementar }
+    pedido,
+    duplicar,
+    incrementar
+  }
 })
 
 // export const useCounterStore = defineStore('counter', {

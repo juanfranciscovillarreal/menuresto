@@ -5,25 +5,34 @@
         <th class="text-left">
           Descripcion
         </th>
-        <th class="text-right pa-0">
+        <th class="pa-0" colspan="3">
           Cantidad
         </th>
         <th class="text-right">
           Subtotal
         </th>
-        <th></th>
+        <th>          
+        </th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="item in orden" :key="item.id">
-        <td>{{ item.title }}</td>
-        <td style="padding: 0px;" class="text-right">
+      <tr v-for="item in menuStore.pedido" :key="item.id">
+        <td>
+          {{ item.title }}
+        </td>
+        <td style="padding: 0px; width: 1em;">
           <v-btn icon="mdi-minus" size="x-small" variant="text" @click="restarItem(item)"></v-btn>
+        </td>
+        <td style="padding: 0px; width: 1em; text-align: center;">
           <span class="text-caption">{{ item.cantidad }}</span>
+        </td>
+        <td style="padding: 0px; width: 1em;">
           <v-btn icon="mdi-plus" size="x-small" variant="text" @click="sumarItem(item)"></v-btn>
         </td>
-        <td class="text-right">{{ $filters.toPesos(item.subtotal) }}</td>
-        <td>
+        <td class="text-right" style="padding: 0px;">
+          {{ $filters.toPesos(item.subtotal) }}
+        </td>
+        <td style="padding-left: 0.5em;">
           <v-icon size="small" @click="deleteItem(item)">
             mdi-delete
           </v-icon>
@@ -33,45 +42,26 @@
     <tfoot style="background-color: lightblue; font-weight: bold;">
       <tr class="xt-subtitle-1">
         <td v-text="'Total'"></td>
-        <td></td>
-        <td v-text="$filters.toPesos(total)" style="text-align: end;"></td>
+        <td style="padding: 0px;"></td>
+        <td style="padding: 0px;"></td>
+        <td style="padding: 0px;"></td>
+        <td v-text="$filters.toPesos(menuStore.total)" style="text-align: end; padding: 0px;"></td>
         <td></td>
       </tr>
     </tfoot>
   </v-table>
 </template>
 
-
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMenuStore } from "../stores/menu";
-import Cantidad from '@/components/Cantidad.vue';
 
 const router = useRouter()
 const menuStore = useMenuStore()
-const orden = ref([])
 const itemIndex = ref(-1)
-const headers = ref([
-  {
-    title: 'Descripción',
-    align: 'start',
-    sortable: false,
-    key: 'title',
-    class: "text-h6"
-  },
-  { title: 'Cantidad', align: 'center', key: 'cantidad', sortable: false, },
-  // { title: 'Precio', align: 'end', key: 'precio', sortable: false },
-  { title: 'Importe', align: 'end', key: 'subtotal', sortable: false },
-  { title: '', key: 'actions', sortable: false },
-])
-
-const total = ref(0)
 
 onMounted(() => {
-  orden.value = menuStore.menuCompleto.filter((item) => {
-    return item.favorito == true;
-  })
   totalizar();
 })
 
@@ -95,7 +85,7 @@ function restarItem(item) {
 }
 
 function totalizar() {
-  total.value = orden.value.reduce(function (prev, cur) {
+  menuStore.total = menuStore.pedido.reduce(function (prev, cur) {
     return parseFloat(prev) + parseFloat(cur.subtotal);
   }, 0).toFixed(2);
 }
@@ -104,8 +94,8 @@ function deleteItem(item) {
   item.favorito = false;
   item.subtotal = 0;
   totalizar();
-  itemIndex.value = orden.value.indexOf(item);
-  orden.value.splice(itemIndex.value, 1);
+  itemIndex.value = menuStore.pedido.indexOf(item);
+  menuStore.pedido.splice(itemIndex.value, 1);
 }
 
 </script>

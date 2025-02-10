@@ -41,7 +41,6 @@ import Inicio from '../pages/Inicio.vue'
 import Menu from '../pages/Menu.vue'
 import MenuDetalle from '../pages/MenuDetalle.vue'
 import Favoritos from '../pages/Favoritos.vue'
-import Orden from '../pages/Orden.vue'
 import Principal from '../pages/Principal.vue'
 import Contacto from '../pages/Contacto.vue'
 import WiFi from '../pages/WiFi.vue'
@@ -92,10 +91,6 @@ const routes = [
           {
             path: '/Favoritos',
             component: Favoritos,
-          },
-          {
-            path: '/Orden',
-            component: Orden,
           },
           {
             path: '/Pedido',

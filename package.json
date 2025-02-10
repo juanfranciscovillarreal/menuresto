@@ -13,6 +13,7 @@
     "@mdi/font": "7.4.47",
     "roboto-fontface": "*",
     "vue": "^3.4.31",
+    "vue-qrcode": "^2.2.2",
     "vuetify": "^3.7.9"
   },
   "devDependencies": {

@@ -5,18 +5,12 @@
             Menu
         </v-btn>
 
-        <!-- <v-btn @click="router.push('Favoritos')">
-            <v-badge color="success" content="2">
-                <v-icon>mdi-heart</v-icon>
-            </v-badge>
-            Favoritos
-        </v-btn> -->
-
         <v-btn @click="router.push('/Pedido')">
-            <v-badge color="success" dot>
+            <v-badge v-if="menuStore.total > 0" color="success" dot>
                 <v-icon>mdi-receipt-text-outline</v-icon>
             </v-badge>
-            Orden
+            <v-icon v-else="menuStore.total = 0">mdi-receipt-text-outline</v-icon>
+            Pedido
         </v-btn>
     </v-bottom-navigation>
 </template>
@@ -25,10 +19,12 @@
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 import { onMounted } from 'vue'
+import { useMenuStore } from "../stores/menu";
 
 const router = useRouter()
 const route = useRoute()
 const value = ref(0)
+const menuStore = useMenuStore()
 
 onMounted(() => {
     if (route.path.includes('MenuDetalle')) {

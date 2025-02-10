@@ -7,9 +7,9 @@
     <v-toolbar-title>Menú</v-toolbar-title>
 
     <v-spacer></v-spacer>
-    
+
     <v-btn v-if="route.path == '/Pedido'" icon>
-      <v-icon @click="verQR = true">mdi-qrcode</v-icon>
+      <v-icon @click="generarQR()">mdi-qrcode</v-icon>
     </v-btn>
 
     <!-- Cerrar búsqueda-->
@@ -78,7 +78,7 @@
     </v-list>
     <!-- Fin Links -->
 
-    <template v-slot:append>      
+    <template v-slot:append>
       <v-divider></v-divider>
       <!-- Varios -->
       <v-list :lines="false" density="compact" nav>
@@ -98,48 +98,35 @@
   </v-main>
 
   <template>
-  <div class="text-center pa-4">
-    <v-dialog
-      v-model="verQR"
-      width="auto"
-    >
-      <v-card
-        max-width="400"
-        prepend-icon="mdi-update"
-        text="Your application will relaunch automatically after the update is complete."
-        title="Update in progress"
-      >
-        <template v-slot:actions>
-          <v-btn
-            class="ms-auto"
-            text="Ok"
-            @click="verQR = false"
-          ></v-btn>
-        </template>
-      </v-card>
-    </v-dialog>
-  </div>
-</template>
+    <div class="text-center pa-4">
+      <v-dialog v-model="verQR" width="auto">
+        <v-card max-width="400" title="Comparta su pedido" class="text-center">
+          <vue-qrcode :value="qrValue" :width="300" type="image/png" :color="{ dark: '#000000ff' }" :margin="6"
+            :scale="4" />
+          <template v-slot:actions>
+            <v-btn class="ms-auto" text="Cerrar" @click="verQR = false"></v-btn>
+          </template>
+        </v-card>
+      </v-dialog>
+    </div>
+  </template>
 
 </template>
-
-<!-- <script setup>
-import { onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-
-import Menu from '../pages/Menu.vue';
-</script> -->
 
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useMenuStore } from "../stores/menu";
 import { ref } from 'vue'
+import VueQrcode from 'vue-qrcode';
 
 // const theme = ref('light')
 const router = useRouter()
 const route = useRoute()
+const menuStore = useMenuStore()
 const buscar = ref(false)
 const verQR = ref(false)
+const qrValue = ref('')
 
 const drawer = ref(false)
 const links = ref([
@@ -167,6 +154,11 @@ watch(drawer, (newValue, oldValue) => {
 
 function onClick() {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
+}
+
+function generarQR() {
+  qrValue.value = JSON.stringify(menuStore.pedido.map(({ id, cantidad }) => ({ id, cantidad })));
+  verQR.value = true;
 }
 
 </script>

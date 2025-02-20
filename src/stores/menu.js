@@ -49,12 +49,19 @@ export const useMenuStore = defineStore('menu', () => {
     count.value++
   }
 
+  function totalizar() {
+    total.value = pedido.value.reduce(function (prev, cur) {
+        return parseFloat(prev) + parseFloat(cur.subtotal);
+    }, 0).toFixed(2);
+}
+
   return {
     count,
     total,
     menuFiltrado,
     menuCompleto,
     pedido,
+    totalizar,
     duplicar,
     incrementar
   }

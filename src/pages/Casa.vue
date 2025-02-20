@@ -1,10 +1,16 @@
 <template>
   <v-app-bar color="primary" :absolute="false">
     <!-- Botón Menú Principal -->
-    <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" v-if="route.path != '/LeerQR'"></v-app-bar-nav-icon>
 
     <!-- Título App -->
-    <v-toolbar-title>Menú</v-toolbar-title>
+    <v-btn v-if="route.path == '/LeerQR'" icon>
+      <v-icon @click="router.push('/Pedido')">
+        mdi-arrow-left
+      </v-icon>
+    </v-btn>
+
+    <v-toolbar-title>{{getTitulo}}</v-toolbar-title>
 
     <v-spacer></v-spacer>
 
@@ -164,6 +170,10 @@ onMounted(() => {
 
 watch(drawer, (newValue, oldValue) => {
   drawer.value = newValue
+})
+
+const getTitulo = computed(() => {
+  return route.path != '/LeerQR' ? 'Menú' : 'Leer QR'
 })
 
 function onClick() {

@@ -1,5 +1,5 @@
 <template>
-    <v-bottom-navigation v-model="value" grow height="65">
+    <v-bottom-navigation v-model="value" grow height="65" v-if="route.path != '/LeerQR'">
         <v-btn @click="router.push('/Menu')">
             <v-icon>mdi-library</v-icon>
             Menu

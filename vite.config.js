@@ -46,7 +46,7 @@ export default defineConfig({
       vueTemplate: true,
     }),
   ],
-  base:'https://juanfranciscovillarreal/github.io/menuresto/',
+  base:'/menuresto/',
   define: { 'process.env': {} },
   resolve: {
     alias: {

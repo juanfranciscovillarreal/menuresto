@@ -1,10 +1,10 @@
 <template>
   <v-sheet class="mt-2">
     <v-slide-group :show-arrows="false" :mobile="true" mobile-breakpoint="xs" center-active v-model="model">
-      <v-slide-group-item v-for="[id, text, icon] in categoriasStore.categorias" v-slot="{ isSelected = true, toggle }">
+      <v-slide-group-item v-for="categoria in categoriasStore.categorias" v-slot="{ isSelected = true, toggle }">
 
-        <v-btn :color="isSelected ? 'primary' : undefined" class="ma-2" rounded @click="$emit('someEvent', toggle, id)">
-          {{ text }}
+        <v-btn :color="isSelected ? 'primary' : undefined" class="ma-2" rounded @click="$emit('someEvent', toggle, categoria.id)">
+          {{ categoria.nombre }}
         </v-btn>
       </v-slide-group-item>
     </v-slide-group>

@@ -1,68 +1,64 @@
 <template>
   <v-app-bar color="primary" :absolute="false">
     <!-- Botón Menú Principal -->
-    <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" v-if="route.path != '/LeerQR'"></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" 
+        v-if="route.path.includes('/Inicio') || route.path == `/${empresa}`">
+    </v-app-bar-nav-icon>
 
-    <!-- Título App -->
-    <v-btn v-if="route.path == '/LeerQR'" icon>
-      <v-icon @click="router.push('/Pedido')">
+    <v-btn v-if="route.path != `/${empresa}/Inicio` && route.path != `/${empresa}`" icon>
+      <v-icon @click="router.push(`/${empresa}/Inicio`)">mdi-arrow-left</v-icon>
+    </v-btn>
+
+    <!-- Volver -->
+    <v-btn v-if="route.path == `/${empresa}/LeerQR`" icon>
+      <v-icon @click="router.push(`/${empresa}/Pedido`)">
         mdi-arrow-left
       </v-icon>
     </v-btn>
 
-    <v-toolbar-title>{{getTitulo}}</v-toolbar-title>
+    <!-- Título App -->
+    <v-toolbar-title>{{ getTitulo }}</v-toolbar-title>
 
-    <v-spacer></v-spacer>
+    <!-- Espacio -->
+    <v-spacer v-if="route.path == `/${empresa}/Menu`"></v-spacer>
 
-    <v-btn v-if="route.path == '/Pedido'" icon>
+    <!-- Generar QR -->
+    <v-btn v-if="route.path == `/${empresa}/Pedido`" icon>
       <v-icon @click="generarQR()">mdi-share</v-icon>
     </v-btn>
 
-    <v-btn v-if="route.path == '/Pedido'" icon>
+    <!-- Leer QR -->
+    <v-btn v-if="route.path == `/${empresa}/Pedido`" icon>
       <v-icon @click="router.push('/LeerQR')">mdi-qrcode-scan</v-icon>
     </v-btn>
 
-    <!-- Cerrar búsqueda-->
-    <v-btn v-if="buscar == true && route.path == '/Menu'" icon>
-      <v-icon @click="buscar = false">mdi-close</v-icon>
+    <!-- Buscar -->
+    <Buscar />
+
+    <!-- Expandir / Contraer -->
+    <v-btn v-if="route.path == `/${empresa}/Menu`" icon>
+      <v-icon @click="menuStore.expandirContraerMenu()">
+        {{ menuStore.expandir.length > 0 ? 'mdi-minus-box-multiple-outline' : 'mdi-expand-all' }}
+      </v-icon>
     </v-btn>
 
-    <!-- Buscar -->
-    <v-menu transition="slide-x-reverse-transition">
-      <template v-slot:activator="{ props }">
-        <!-- Texto a buscar -->
-        <v-text-field v-if="buscar == true && route.path == '/Menu'" hide-details single-line placeholder="Buscar"
-          append-inner-icon="mdi-magnify">
-        </v-text-field>
-
-        <!-- Botón Buscar -->
-        <v-btn v-bind="props" v-if="buscar == false && route.path == '/Menu'" icon="mdi-magnify" variant="text"
-          @click="buscar = true">
-        </v-btn>
-
-        <!-- Tema Claro/Oscuro -->
-        <!-- <v-btn :prepend-icon="theme === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'" slim @click="onClick">
-        </v-btn> -->
-      </template>
-    </v-menu>
-
     <!-- Menú Vertical -->
-    <v-menu>
+    <!-- <v-menu>
       <template v-slot:activator="{ props }">
         <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
       </template>
 
-      <v-list density="compact">
-        <v-list-item v-for="(item, i) in items" :key="i" :value="item" color="primary" @click="router.push(item.path);">
-          <template v-slot:prepend>
+<v-list density="compact">
+  <v-list-item v-for="(item, i) in items" :key="i" :value="item" color="primary" @click="router.push(item.path);">
+    <template v-slot:prepend>
             <v-icon :icon="item.icon"></v-icon>
           </template>
 
-          <v-list-item-title v-text="item.text"></v-list-item-title>
-        </v-list-item>
-      </v-list>
+    <v-list-item-title v-text="item.text"></v-list-item-title>
+  </v-list-item>
+</v-list>
 
-    </v-menu>
+</v-menu> -->
 
   </v-app-bar>
 
@@ -78,11 +74,13 @@
     <!-- Links -->
     <v-list :lines="false" density="compact" nav>
       <v-list-item v-for="[text, icon, link] in links" :key="icon" :to="link" link>
-        <template v-slot:prepend>
+        <template v-slot:prepend v-if="text != 'Divider'">
           <v-icon :icon="icon"></v-icon>
         </template>
 
-        <v-list-item-title v-text="text"></v-list-item-title>
+        <v-list-item-title v-text="text" v-if="text != 'Divider'"></v-list-item-title>
+
+        <v-divider v-if="text == 'Divider'"></v-divider>
 
       </v-list-item>
     </v-list>
@@ -137,43 +135,116 @@
 import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useMenuStore } from "../stores/menu";
+import { useEmpresaStore } from "../stores/empresa";
 import { ref } from 'vue'
 import VueQrcode from 'vue-qrcode';
+import Buscar from '../components/Buscar.vue';
+import { supabase } from '../lib/supabase'
 
 // const theme = ref('light')
 const router = useRouter()
 const route = useRoute()
 const menuStore = useMenuStore()
-const buscar = ref(false)
+const empresaStore = useEmpresaStore()
 const verQR = ref(false)
 const qrValue = ref('')
-
 const drawer = ref(false)
-const links = ref([
-  ["Inicio", "mdi-home", "/Inicio"],
-  ["Menu", "mdi-library", "/Menu"],
-  ["Contacto", "mdi-map-marker", "/Contacto"],
-  ["Wi-Fi", "mdi-wifi", "/WiFi"],
-],)
-
-const varios = ref([
-  ["Acerca de InteliCarta...", "mdi-information", "/Acerca"],
-],)
-
-const items = ref([
-  { text: 'Ajustes', icon: 'mdi-cog', path: '/Ajustes' },
-])
+const empresa = ref('')
+const links = ref([])
+const varios = ref([])
+const items = ref([])
 
 onMounted(() => {
-  router.push('Inicio');
+  getEmpresa(); 
 })
+
+async function getEmpresa() {
+  const { data, error } = await supabase
+    .from('Empresa')
+    .select('id, nombre')
+    .eq('nombre', empresa.value)
+    .single();
+
+  if (error) {
+    router.push('/');
+    console.log(`Error en getEmpresa: ${error.message}`);
+    return;
+  }
+
+  if (data) {
+    empresa.value = route.params.empresa; 
+    empresaStore.empresa = data;
+    links.value = [
+      ["Inicio", "mdi-home", "/" + empresa.value + "/Inicio"],
+      ["Menu", "mdi-library", "/" + empresa.value + "/Menu"],
+      ["Contacto", "mdi-map-marker", "/" + empresa.value + "/Contacto"],
+      ["Reservas", "mdi-calendar-month", "/" + empresa.value + "/Reserva"],
+      ["Divider", "", ""],
+      ["Ajustes", "mdi-cog", "/" + empresa.value + "/Ajustes"],
+      ["Wi-Fi", "mdi-wifi", "/" + empresa.value + "/WiFi"],
+    ]
+
+    varios.value = [
+      ["Acerca de InteliCarta...", "mdi-information", `/${empresa.value}/Acerca`],
+    ]
+
+    // items.value = [
+    //   { text: 'Ajustes', icon: 'mdi-cog', path: `/${empresa.value}/Ajustes` },
+    // ]
+
+    router.replace(`/${data.nombre}/Inicio`);
+  } else {    
+    router.push('/');
+  }
+}
 
 watch(drawer, (newValue, oldValue) => {
   drawer.value = newValue
 })
 
 const getTitulo = computed(() => {
-  return route.path != '/LeerQR' ? 'Menú' : 'Leer QR'
+  //console.log(`Ruta: ${route.path}`);
+  var view = route.path.replace('/' + route.params.empresa + '/', '');
+  var titulo = '';
+
+  switch (view) {
+    case `/${route.params.empresa}`:
+      titulo = route.params.empresa
+      break;
+
+    case 'Inicio':
+      titulo = empresa.value;
+      break;
+
+    case 'Menu':
+      titulo = 'Menú';
+      break;
+
+    case 'Contacto':
+      titulo = 'Contacto';
+      break;
+
+    case 'Ajustes':
+      titulo = 'Ajustes';
+      break;
+
+    case 'WiFi':
+      titulo = 'Wi-Fi';
+      break;
+
+    case 'Acerca':
+      titulo = 'Acerca de Intelicarta';
+      break;
+
+    case 'Reserva':
+      titulo = 'Reservas';
+      break;
+
+    default:
+      titulo = 'Menú';
+      break;
+  }
+  return titulo;
 })
 
 function onClick() {

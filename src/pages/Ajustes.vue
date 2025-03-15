@@ -70,6 +70,9 @@
 <script setup>
 import { useAjustesStore } from "../stores/ajustes";
 import { ref } from 'vue'
+import { useLocale } from 'vuetify'
+
+const { current } = useLocale()
 
 const ajustesStore = useAjustesStore()
 const settingsItems = ref([
@@ -95,6 +98,10 @@ function seleccionarIdioma() {
     //idioma.value = idioma.value.charAt(0).toUpperCase() + idioma.value.slice(1)
     console.log(idioma.value);
     dialog.value = false;
+}
+
+function changeLocale(locale) {
+    current.value = locale
 }
 
 </script>

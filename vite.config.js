@@ -46,7 +46,7 @@ export default defineConfig({
       vueTemplate: true,
     }),
   ],
-  base:'/menuresto/',
+  base:'/',
   define: { 'process.env': {} },
   resolve: {
     alias: {

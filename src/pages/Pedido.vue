@@ -11,14 +11,14 @@
         <th class="text-right">
           Subtotal
         </th>
-        <th>          
+        <th>
         </th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="item in menuStore.pedido" :key="item.id">
         <td>
-          {{ item.title }}
+          {{ item.nombre }}
         </td>
         <td style="padding: 0px; width: 1em;">
           <v-btn icon="mdi-minus" size="x-small" variant="text" @click="restarItem(item)"></v-btn>
@@ -39,7 +39,7 @@
         </td>
       </tr>
     </tbody>
-    <tfoot style="background-color: lightblue; font-weight: bold;">
+    <!-- <tfoot style="background-color: lightblue; font-weight: bold;">
       <tr class="xt-subtitle-1">
         <td v-text="'Total'"></td>
         <td style="padding: 0px;"></td>
@@ -48,8 +48,17 @@
         <td v-text="$filters.toPesos(menuStore.total)" style="text-align: end; padding: 0px;"></td>
         <td></td>
       </tr>
-    </tfoot>
+    </tfoot> -->
   </v-table>
+
+  <v-toolbar density="compact" color="primary" style="position: fixed; bottom: 67px;" class="pr-4">
+    <v-toolbar-title>Total</v-toolbar-title>
+
+    <v-spacer></v-spacer>
+
+    {{ $filters.toPesos(menuStore.total) }}
+  </v-toolbar>
+
 </template>
 
 <script setup>

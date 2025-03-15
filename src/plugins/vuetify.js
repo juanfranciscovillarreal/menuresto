@@ -8,6 +8,15 @@
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 
+// Dates
+// import DateFnsAdapter from '@date-io/date-fns'
+// import enUS from 'date-fns/locale/en-US'
+// import svSE from 'date-fns/locale/sv'
+
+// Translations provided by Vuetify
+
+import es from '../locales/es'
+
 // Composables
 import { createVuetify } from 'vuetify'
 
@@ -15,5 +24,9 @@ import { createVuetify } from 'vuetify'
 export default createVuetify({
   theme: {
     // defaultTheme: 'dark',
+  },
+  locale: {
+    locale: 'es',
+    messages: { es},
   },
 })

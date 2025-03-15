@@ -23,12 +23,8 @@
   <!-- Menú chips -->
   <v-container class="bg-surface-variant ">
     <v-chip-group column>
-      <!-- <v-chip v-for="[id, text, icon] in categoriasStore.categorias" 
-                         :key="id" 
-                         @click="seleccionarMenu(id)">
-            {{ text }}
-          </v-chip> -->
-      <v-chip v-for="categoria in categoriasStore.categorias" :key="categoria.id" @click="seleccionarMenu(id)">
+      <v-chip v-for="(categoria, index) in categoriasStore.categorias" :key="index"
+        @click="seleccionar(categoria, index)">
         {{ categoria.nombre }}
       </v-chip>
     </v-chip-group>
@@ -64,12 +60,14 @@ import Carousel from '@/components/Carousel.vue';
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue';
 import { useCategoriasStore } from "../stores/categorias";
+import { useMenuStore } from "../stores/menu";
+import { useEmpresaStore } from "../stores/empresa";
 import { supabase } from '../lib/supabase'
 
 const categoriasStore = useCategoriasStore()
+const menuStore = useMenuStore()
+const empresaStore = useEmpresaStore()
 const router = useRouter()
-
-const menuCompleto = ref([])
 
 onMounted(() => {
   getCategorias();
@@ -81,8 +79,15 @@ async function getCategorias() {
     .from('Categoria')
     .select('id, nombre');
 
-  if (error) throw error
+  if (error){
+    console.log(`Error en getCategorias: ${error}`);
+    throw error;
+  }
 
+  data.unshift({
+    id: 0,
+    nombre: "Todos"
+  });
   categoriasStore.categorias = data;
 }
 
@@ -90,16 +95,24 @@ async function getMenu() {
   const { data, error } = await supabase
     .from('Categoria')
     .select(`id, nombre,
-             Item (id, nombre)`
+             Item (id, id_categoria, nombre, descripcion, precio, foto)`
     )
 
-  if (error) throw error
+  if (error) {
+    console.log(`Error en getMenu: ${error}`);
+    throw error;
+  }
 
-  menuCompleto.value = data;
+  if (menuStore.pedido.length == 0) {
+    // Cargo el menú completo si no hay un pedido hecho
+    menuStore.menuCompleto = data;
+  }
+
 }
 
-function seleccionarMenu(id) {
-  categoriasStore.seleccionada = id;
-  router.push('/Menu');
+function seleccionar(categoria, index) {
+  categoriasStore.seleccionada = categoria;
+  categoriasStore.index = index;
+  router.push(`/${empresaStore.empresa.nombre}/Menu`);
 }
 </script>

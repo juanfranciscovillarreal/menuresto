@@ -35,11 +35,9 @@
 
 // export default router
 
-import { createMemoryHistory, createRouter } from 'vue-router'
+import { createMemoryHistory, createWebHistory, createRouter } from 'vue-router'
 
 import Inicio from '../pages/Inicio.vue'
-import Menu from '../pages/Menu.vue'
-import MenuDetalle from '../pages/MenuDetalle.vue'
 import Principal from '../pages/Principal.vue'
 import Contacto from '../pages/Contacto.vue'
 import WiFi from '../pages/WiFi.vue'
@@ -48,90 +46,85 @@ import Ajustes from '../pages/Ajustes.vue'
 import Acerca from '../pages/Acerca.vue'
 import Pedido from '../pages/Pedido.vue'
 import LeerQR from '../pages/LeerQR.vue'
+import Menu from '../pages/Menu.vue'
+import Reserva from '../pages/Reserva.vue'
+import Land from '../pages/Land.vue'
+import PageNotFound from '../pages/PageNotFound.vue'
 
 const routes = [
   {
+    path: '/:pathMatch(.*)*',
+    component: PageNotFound,
+  },
+  {
     path: '/',
+    component: Land,
+  },
+  {
+    path: '/:empresa',
     component: Casa,
+   // redirect: '/:empresa/Inicio',
     children: [
       {
-        path: '/Inicio',
+        path: '/:empresa/Inicio',
         component: Inicio,
       },
       {
-        path: '/WiFi',
+        path: '/:empresa/WiFi',
         component: WiFi,
       },
       {
-        path: '/Contacto',
+        path: '/:empresa/Contacto',
         component: Contacto,
       },
       {
-        path: '/Ajustes',
+        path: '/:empresa/Ajustes',
         component: Ajustes,
       },
       {
-        path: '/Acerca',
+        path: '/:empresa/Acerca',
         component: Acerca,
       },
       {
-        path: '/Principal',
+        path: '/:empresa/Reserva',
+        component: Reserva,
+      },
+      {
+        path: '/:empresa/Principal',
         component: Principal,
         children: [
           {
-            path: '/Menu',
+            path: '/:empresa/Menu',
             component: Menu,
-            children: [
-              // {
-              //   path: 'MenuDetalle/:id',
-              //   component: MenuDetalle,
-              // },
-            ]
           },
           {
-            path: '/Pedido',
+            path: '/:empresa/Pedido',
             component: Pedido,
           },
           {
-            path: '/LeerQR',
+            path: '/:empresa/LeerQR',
             component: LeerQR,
           },
         ],
       },
     ],
-  },
+  }
 ]
 
 const router = createRouter({
-  history: createMemoryHistory(),
+  // history: createMemoryHistory(),
+  history: createWebHistory(),
   routes,
 })
 
-router.beforeEach((to, from, next) => {
-  // console.log(`BeforeEach: ${JSON.stringify(to)}`);
-  if (to.path == '/Inicio') {
-    // console.log('Inicio');
-  }
-  next();
-
-  //   try {
-  //     next();
-  //     if (to.name == null) { // La ruta no existe
-  //       return { name: 'Inicio' }
-  //       //   if(from.name == 'Inicio'){ // NavigationDuplicated
-  //       //     return false;
-  //       //   }
-  //       //   else{
-  //       //     router.push('/');
-  //       //     console.log(`La ruta ${to.path} no existe!`)
-  //       //   }
-  //     }
-  //     else {
-  //       next();
-  //     }
-  //   } catch (error) {
-  //     console.log(`Error en router: ${error}`)
-  //   }
+router.onError((error) => {
+  console.log(`Router error: ${error.message}`);
 })
+
+router.beforeEach((to, from) => {
+  // explicitly return false to cancel the navigation
+  // return false
+})
+
 
 export default router

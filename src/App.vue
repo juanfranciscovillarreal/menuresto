@@ -5,7 +5,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 
 const theme = ref('light')
 </script>

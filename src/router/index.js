@@ -41,7 +41,7 @@ import Inicio from '../pages/Inicio.vue'
 import Principal from '../pages/Principal.vue'
 import Contacto from '../pages/Contacto.vue'
 import WiFi from '../pages/WiFi.vue'
-import Casa from '../pages/Casa.vue'
+import Home from '../pages/Home.vue'
 import Ajustes from '../pages/Ajustes.vue'
 import Acerca from '../pages/Acerca.vue'
 import Pedido from '../pages/Pedido.vue'
@@ -50,19 +50,72 @@ import Menu from '../pages/Menu.vue'
 import Reserva from '../pages/Reserva.vue'
 import Land from '../pages/Land.vue'
 import PageNotFound from '../pages/PageNotFound.vue'
+import Login from '../pages/Login.vue'
+import SignUp from '../pages/SignUp.vue'
+import ForgotPass from '../pages/ForgotPass.vue'
+import Administracion from '../pages/Administracion.vue'
+import Categoria from '../pages/Categoria.vue'
+import Item from '@/pages/Item.vue'
+import NewPass from '@/pages/NewPass.vue'
+import Empresa from '@/pages/Empresa.vue'
 
 const routes = [
   {
     path: '/:pathMatch(.*)*',
+    name: 'Error',
     component: PageNotFound,
   },
   {
     path: '/',
     component: Land,
+    children: [  
+    ]
   },
   {
-    path: '/:empresa',
-    component: Casa,
+    path: '/Login',
+    component: Login,
+  },
+  {
+    path: '/signUp',
+    name: 'SignUp',
+    component: SignUp,
+  },
+  {
+    path: '/forgotPass',
+    name: 'ForgotPass',
+    component: ForgotPass,
+  },    
+  {
+    path: '/newPass',
+    name: 'NewPass',
+    component: NewPass,
+  },  
+  {
+    path: '/administracion',
+    name: 'Administracion',
+    component: Administracion,
+    children: [  
+    ]
+  },   
+  {
+    path: '/categoria',
+    name: 'Categoria',
+    component: Categoria,
+  },  
+  {
+    path: '/item',
+    name: 'Item',
+    component: Item,
+  },  
+  {
+    path: '/empresa',
+    name: 'Empresa',
+    component: Empresa,
+  },  
+
+  {
+    path: '/Menu/:empresa',
+    component: Home,
    // redirect: '/:empresa/Inicio',
     children: [
       {

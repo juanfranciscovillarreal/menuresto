@@ -1,11 +1,21 @@
 <template>
     <v-app>
         <v-app-bar color="grey">
+            <!-- Título -->
             <v-app-bar-title>InteliCarta</v-app-bar-title>
+            <!-- Espacio -->
+            <v-spacer></v-spacer>
+
+            <!-- Ususario -->
+            <v-btn icon>
+                <v-icon @click="router.push('/Login')">mdi-account-circle</v-icon>
+            </v-btn>
+
         </v-app-bar>
 
         <v-main>
-            <v-container>
+            <router-view />
+            <!-- <v-container>
                 <v-row>
                     <v-col v-for="empresa in empresas" :key="n" cols="4">
                         <v-card height="100" class="mx-auto" color="surface-variant"
@@ -14,7 +24,7 @@
                         </v-card>
                     </v-col>
                 </v-row>
-            </v-container>
+            </v-container> -->
         </v-main>
     </v-app>
 </template>
@@ -24,6 +34,7 @@ import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { supabase } from '../lib/supabase'
+import { useErrorHandler } from '@/composables/errorHandler'
 
 const router = useRouter()
 const route = useRoute()
@@ -34,19 +45,20 @@ onMounted(() => {
 })
 
 async function getEmpresas() {
-    const { data, error } = await supabase
-        .from('Empresa')
-        .select('id, nombre');
+    try {
+        const { data, error } = await supabase
+            .from('Empresa')
+            .select('id, nombre');
 
-    if (error) {
-        router.push('/');
-        console.log(`Error en getEmpresas: ${error.message}`);
-    }
+        if (error) {
+            throw error;
+        }
 
-    if (data) {
-        empresas.value = data;
-    } else {
-        router.push('/');
+        if (data.length > 0) {
+            empresas.value = data;
+        }
+    } catch (error) {
+        console.log(`Error en getEmpresas: ${useErrorHandler(error)}`);
     }
 }
 

@@ -1,8 +1,8 @@
 <template>
   <v-app-bar color="primary" :absolute="false">
     <!-- Botón Menú Principal -->
-    <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" 
-        v-if="route.path.includes('/Inicio') || route.path == `/${empresa}`">
+    <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"
+      v-if="route.path.includes('/Inicio') || route.path == `/${empresa}`">
     </v-app-bar-nav-icon>
 
     <v-btn v-if="route.path != `/${empresa}/Inicio` && route.path != `/${empresa}`" icon>
@@ -17,7 +17,8 @@
     </v-btn>
 
     <!-- Título App -->
-    <v-toolbar-title>{{ getTitulo }}</v-toolbar-title>
+    <!-- <v-toolbar-title>{{ getTitulo }}</v-toolbar-title> -->
+    <v-toolbar-title>Intelicarta</v-toolbar-title> 
 
     <!-- Espacio -->
     <v-spacer v-if="route.path == `/${empresa}/Menu`"></v-spacer>
@@ -140,6 +141,7 @@ import { ref } from 'vue'
 import VueQrcode from 'vue-qrcode';
 import Buscar from '../components/Buscar.vue';
 import { supabase } from '../lib/supabase'
+import { useErrorHandler } from '@/composables/errorHandler'
 
 // const theme = ref('light')
 const router = useRouter()
@@ -155,46 +157,49 @@ const varios = ref([])
 const items = ref([])
 
 onMounted(() => {
-  getEmpresa(); 
+  getEmpresa();
 })
 
 async function getEmpresa() {
-  const { data, error } = await supabase
-    .from('Empresa')
-    .select('id, nombre')
-    .eq('nombre', empresa.value)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('Empresa')
+      .select('id, nombre')
+      .eq('nombre', empresa.value)
+      .single();
 
-  if (error) {
-    router.push('/');
-    console.log(`Error en getEmpresa: ${error.message}`);
-    return;
-  }
+    if (error) {
+      throw error;
+    }
 
-  if (data) {
-    empresa.value = route.params.empresa; 
-    empresaStore.empresa = data;
-    links.value = [
-      ["Inicio", "mdi-home", "/" + empresa.value + "/Inicio"],
-      ["Menu", "mdi-library", "/" + empresa.value + "/Menu"],
-      ["Contacto", "mdi-map-marker", "/" + empresa.value + "/Contacto"],
-      ["Reservas", "mdi-calendar-month", "/" + empresa.value + "/Reserva"],
-      ["Divider", "", ""],
-      ["Ajustes", "mdi-cog", "/" + empresa.value + "/Ajustes"],
-      ["Wi-Fi", "mdi-wifi", "/" + empresa.value + "/WiFi"],
-    ]
+    if (data) {
+      empresa.value = route.params.empresa;
+      empresaStore.empresa = data;
+      links.value = [
+        ["Inicio", "mdi-home", "/" + empresa.value + "/Inicio"],
+        ["Menu", "mdi-library", "/" + empresa.value + "/Menu"],
+        ["Contacto", "mdi-map-marker", "/" + empresa.value + "/Contacto"],
+        ["Reservas", "mdi-calendar-month", "/" + empresa.value + "/Reserva"],
+        ["Divider", "", ""],
+        ["Ajustes", "mdi-cog", "/" + empresa.value + "/Ajustes"],
+        ["Wi-Fi", "mdi-wifi", "/" + empresa.value + "/WiFi"],
+      ]
 
-    varios.value = [
-      ["Acerca de InteliCarta...", "mdi-information", `/${empresa.value}/Acerca`],
-    ]
+      varios.value = [
+        ["Acerca de InteliCarta...", "mdi-information", `/${empresa.value}/Acerca`],
+      ]
 
-    // items.value = [
-    //   { text: 'Ajustes', icon: 'mdi-cog', path: `/${empresa.value}/Ajustes` },
-    // ]
+      // items.value = [
+      //   { text: 'Ajustes', icon: 'mdi-cog', path: `/${empresa.value}/Ajustes` },
+      // ]
 
-    router.replace(`/${data.nombre}/Inicio`);
-  } else {    
-    router.push('/');
+      router.replace(`/${data.nombre}/Inicio`);
+    } else {
+      router.push('/');
+    }
+  } catch (error) {
+    router.push('/PageNotFound');
+    console.log(`Error en getEmpresa: ${useErrorHandler(error)}`);
   }
 }
 

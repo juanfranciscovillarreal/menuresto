@@ -2,14 +2,17 @@
   <ToolBar titulo="Empresa" ruta="/Administracion"></ToolBar>
 
   <div class="d-flex align-center justify-space-around mt-2">
-    <v-avatar size="150">
+    <v-avatar size="100">
       <v-img :width="100" aspect-ratio="1/1" cover :src="preview"></v-img>
     </v-avatar>
   </div>
-  <v-file-input accept="image/*" prepend-icon="mdi-camera" hide-input @change="onFilePicked">
-  </v-file-input>
 
   <div class="d-flex align-center justify-space-around">
+    <v-file-input accept="image/*" prepend-icon="mdi-camera" hide-input @change="onFilePicked">
+    </v-file-input>
+  </div>
+
+  <!-- <div class="d-flex align-center justify-space-around">
     <v-card variant="text">
       <v-card-item>
         <v-card-title class="text-center">
@@ -22,32 +25,78 @@
       </v-card-item>
 
     </v-card>
-  </div>
+  </div> -->
 
-  <v-sheet rounded min-width="360">
-    <v-card class="mx-auto px-6 py-8" max-width="400">
-      <v-form v-model="form" @submit.prevent="onSubmit">
-        <v-text-field v-model="nombre" :rules="[required]" class="mb-2" label="Nombre" clearable>
-        </v-text-field>
+  <v-container>
+    <v-form v-model="form" @submit.prevent="onSubmit">
+      <v-row no-gutters>
+        <!-- nombre -->
+        <v-col cols="12" md="4">
+          <v-sheet class="pl-2 pr-2">
+            <v-text-field v-model="nombre" :rules="[required]" label="Nombre" clearable>
+            </v-text-field>
+          </v-sheet>
+        </v-col>
 
-        <v-text-field v-model="descripcion" :rules="[required]" class="mb-2" label="Descripción" clearable>
-        </v-text-field>
+        <!-- descripcion -->
+        <v-col cols="12" md="4">
+          <v-sheet class="pl-2 pr-2">
+            <v-text-field v-model="descripcion" :rules="[required]" label="Descripción" clearable>
+            </v-text-field>
+          </v-sheet>
+        </v-col>
 
-        <v-select :items="categorias" item-title="nombre" item-value="id" v-model="categoria" density="comfortable"
-          label="Categoria">
-        </v-select>
+        <!-- direccion -->
+        <v-col cols="12" md="4">
+          <v-sheet class="pl-2 pr-2">
+            <v-text-field v-model="direccion" :rules="[required]" label="Dirección" clearable>
+            </v-text-field>
+          </v-sheet>
+        </v-col>
+      </v-row>
 
-        <v-text-field v-model="precio" :rules="[required]" class="mb-2" label="Precio" clearable>
-        </v-text-field>
+      <v-row no-gutters>
+        <!-- telefono -->
+        <v-col cols="12" md="4">
+          <v-sheet class="pl-2 pr-2">
+            <v-text-field v-model="telefono" :rules="[required]" label="Teléfono" clearable>
+            </v-text-field>
+          </v-sheet>
+        </v-col>
 
-        <br />
+        <!-- celular -->
+        <v-col cols="12" md="4">
+          <v-sheet class="pl-2 pr-2">
+            <v-text-field v-model="celular" :rules="[required]" label="Celular" clearable>
+            </v-text-field>
+          </v-sheet>
+        </v-col>
 
-        <v-btn :disabled="!form" color="success" type="submit" variant="elevated" block>
-          Agregar
-        </v-btn>
-      </v-form>
-    </v-card>
-  </v-sheet>
+        <v-col cols="12" md="4">
+          <v-sheet class="pl-2 pr-2">
+            <v-text-field v-model="web" :rules="[required]" label="Web" clearable>
+            </v-text-field>
+          </v-sheet>
+        </v-col>
+      </v-row>
+
+      <v-row no-gutters>
+        <!-- email -->
+        <v-col cols="12" md="12">
+          <v-sheet class="pl-2 pr-2">
+            <v-text-field v-model="email" :rules="[required]" label="Correo" clearable>
+            </v-text-field>
+          </v-sheet>
+        </v-col>
+      </v-row>
+
+      <br />
+
+      <v-btn :disabled="!form" color="success" type="submit" variant="elevated" block>
+        Agregar
+      </v-btn>
+    </v-form>
+  </v-container>
 
 </template>
 

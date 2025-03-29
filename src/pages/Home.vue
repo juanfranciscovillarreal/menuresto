@@ -66,7 +66,7 @@
   <v-navigation-drawer v-model="drawer" temporary>
     <!-- Logo -->
     <v-card rounded="0" class="pa-2">
-      <v-img aspect-ratio="16/9" src="../assets/Suss.png" cover>
+      <v-img aspect-ratio="16/9" :src="getImage" cover>
       </v-img>
     </v-card>
 
@@ -205,6 +205,11 @@ async function getEmpresa() {
 
 watch(drawer, (newValue, oldValue) => {
   drawer.value = newValue
+})
+
+const getImage = computed(() => {
+  debugger
+  return empresaStore.empresa.logo != '' ? empresaStore.empresa.logo : '@/assets/Empresa.png';
 })
 
 const getTitulo = computed(() => {

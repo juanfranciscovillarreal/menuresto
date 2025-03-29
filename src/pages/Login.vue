@@ -49,13 +49,15 @@ import { supabase } from '../lib/supabase'
 import ToolBar from '@/components/ToolBar.vue';
 import { useErrorHandler } from '@/composables/errorHandler'
 import Dialog from '@/components/Dialog.vue';
+import { useUsuarioStore } from "../stores/usuario";
 import { useEmpresaStore } from "../stores/empresa";
 
+const usuarioStore = useUsuarioStore()
 const empresaStore = useEmpresaStore()
 const router = useRouter();
 const form = ref(false);
 const email = ref('juanfranciscovillarreal@hotmail.com');
-const password = ref('supabase.4321');
+const password = ref('123456');
 const visible = ref(false);
 const dialogShow = ref(false);
 const dialogTitulo = ref('Inicio de sesión');
@@ -79,29 +81,26 @@ onMounted(() => {
 async function onSubmit() {
     if (!form.value) return;
 
-    await signInWithEmail();
-    await getEmpresa();
-}
-
-async function signInWithEmail() {
     try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email.value,
-            password: password.value,
-        });
-
-        if (error) throw error
-
-        // console.log(`Usuario: ${data.user.email}`);
-        // console.log(`Usuario Id: ${data.user.id}`);
-        empresaStore.empresa.id = data.user.id;
-        router.push('/Administracion');
+        await signInWithEmail();
+        await getEmpresa();
     } catch (error) {
-        console.log(`Error en signInWithEmail: ${useErrorHandler(error)}`);
         dialogShow.value = true;
         dialogMensaje.value = useErrorHandler(error);
     }
+}
 
+async function signInWithEmail() {
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.value,
+        password: password.value,
+    });
+
+    if (error) throw error
+
+    empresaStore.empresa.id = data.user.id;
+    usuarioStore.email = email.value;
+    router.push('/Administracion');
 }
 
 async function getEmpresa() {
@@ -115,12 +114,15 @@ async function getEmpresa() {
         if (error) throw error
 
         empresaStore.empresa = data;
-        empresaStore.empresa.email = email.value;
+
+        if (data.logo == '' || data.logo == null) {
+            empresaStore.empresa.logo = empresaStore.defaultFoto;
+        }
+
     } catch (error) {
         dialogShow.value = true;
         dialogMensaje.value = useErrorHandler(error);
     }
-
 }
 
 async function signOut() {

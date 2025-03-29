@@ -13,7 +13,7 @@
     <!-- Menú Cuenta Usuario -->
     <Usuario 
       :nombre="empresaStore.empresa.nombre" 
-      :email="empresaStore.empresa.email">
+      :email="usuarioStore.email">
     </Usuario>
 
   </v-app-bar>
@@ -21,7 +21,7 @@
   <v-navigation-drawer v-model="drawer" temporary>
     <!-- Logo -->
     <v-card rounded="0" class="pa-2">
-      <v-img aspect-ratio="16/9" src="../assets/Suss.png" cover>
+      <v-img aspect-ratio="16/9" :src="getImage()" cover>
       </v-img>
     </v-card>
 
@@ -76,15 +76,18 @@
 import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useMenuStore } from "../stores/menu";
+import { useUsuarioStore } from "../stores/usuario";
 import { useEmpresaStore } from "../stores/empresa";
 import { ref } from 'vue'
 import { supabase } from '../lib/supabase'
 import { useErrorHandler } from '@/composables/errorHandler'
 import  Usuario  from "../components/Usuario.vue";
+import imgUrl from '../assets/InteliCarta.png'
 
 const router = useRouter()
 const route = useRoute()
 const menuStore = useMenuStore()
+const usuarioStore = useUsuarioStore()
 const empresaStore = useEmpresaStore()
 const drawer = ref(false)
 const links = ref([
@@ -106,6 +109,9 @@ watch(drawer, (newValue, oldValue) => {
   drawer.value = newValue
 })
 
+function getImage(){
+  return empresaStore.empresa.logo != '' ? empresaStore.empresa.logo : imgUrl;
+}
 async function signOut() {
   try {
     const { error } = await supabase.auth.signOut();

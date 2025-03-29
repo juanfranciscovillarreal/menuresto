@@ -1,39 +1,25 @@
 <template>
-  <ToolBar titulo="Empresa" ruta="/Administracion"></ToolBar>
+  <ToolBar titulo="Perfil" ruta="/Administracion" icono="mdi-content-save" @guardar="onSubmit"></ToolBar>
 
   <div class="d-flex align-center justify-space-around mt-2">
     <v-avatar size="100">
-      <v-img :width="100" aspect-ratio="1/1" cover :src="preview"></v-img>
+      <v-img :width="100" aspect-ratio="1/1" cover :src="getImage"></v-img>
     </v-avatar>
   </div>
 
-  <div class="d-flex align-center justify-space-around">
+  <div class="d-flex align-center justify-space-around position-relative" style="top: -1em; left: 3em;">
     <v-file-input accept="image/*" prepend-icon="mdi-camera" hide-input @change="onFilePicked">
     </v-file-input>
   </div>
 
-  <!-- <div class="d-flex align-center justify-space-around">
-    <v-card variant="text">
-      <v-card-item>
-        <v-card-title class="text-center">
-          {{ nombre }}
-        </v-card-title>
-
-        <v-card-subtitle class="text-center">
-          {{ descripcion }}
-        </v-card-subtitle>
-      </v-card-item>
-
-    </v-card>
-  </div> -->
-
-  <v-container>
+  <v-container class="pt-0">
     <v-form v-model="form" @submit.prevent="onSubmit">
       <v-row no-gutters>
         <!-- nombre -->
         <v-col cols="12" md="4">
           <v-sheet class="pl-2 pr-2">
-            <v-text-field v-model="nombre" :rules="[required]" label="Nombre" clearable>
+            <v-text-field v-model="empresaStore.empresa.nombre" :rules="rules[required, rules.max50]" label="Nombre"
+              variant="underlined" clearable prepend-icon="mdi-account-outline">
             </v-text-field>
           </v-sheet>
         </v-col>
@@ -41,7 +27,8 @@
         <!-- descripcion -->
         <v-col cols="12" md="4">
           <v-sheet class="pl-2 pr-2">
-            <v-text-field v-model="descripcion" :rules="[required]" label="Descripción" clearable>
+            <v-text-field v-model="empresaStore.empresa.descripcion" :rules="[rules.max50]" label="Descripción"
+              variant="underlined" clearable prepend-icon="mdi-information-variant-circle-outline">
             </v-text-field>
           </v-sheet>
         </v-col>
@@ -49,7 +36,8 @@
         <!-- direccion -->
         <v-col cols="12" md="4">
           <v-sheet class="pl-2 pr-2">
-            <v-text-field v-model="direccion" :rules="[required]" label="Dirección" clearable>
+            <v-text-field v-model="empresaStore.empresa.direccion" :rules="[rules.max50]" label="Dirección"
+              variant="underlined" clearable prepend-icon="mdi-map-marker-outline">
             </v-text-field>
           </v-sheet>
         </v-col>
@@ -59,7 +47,8 @@
         <!-- telefono -->
         <v-col cols="12" md="4">
           <v-sheet class="pl-2 pr-2">
-            <v-text-field v-model="telefono" :rules="[required]" label="Teléfono" clearable>
+            <v-text-field v-model="empresaStore.empresa.telefono" :rules="[rules.max50]" label="Teléfono"
+              variant="underlined" clearable prepend-icon="mdi-phone-outline">
             </v-text-field>
           </v-sheet>
         </v-col>
@@ -67,14 +56,17 @@
         <!-- celular -->
         <v-col cols="12" md="4">
           <v-sheet class="pl-2 pr-2">
-            <v-text-field v-model="celular" :rules="[required]" label="Celular" clearable>
+            <v-text-field v-model="empresaStore.empresa.celular" :rules="[rules.max50]" label="Celular"
+              variant="underlined" clearable prepend-icon="mdi-cellphone">
             </v-text-field>
           </v-sheet>
         </v-col>
 
+        <!-- web -->
         <v-col cols="12" md="4">
           <v-sheet class="pl-2 pr-2">
-            <v-text-field v-model="web" :rules="[required]" label="Web" clearable>
+            <v-text-field v-model="empresaStore.empresa.web" :rules="[rules.max50]" label="Web" variant="underlined"
+              clearable prepend-icon="mdi-web">
             </v-text-field>
           </v-sheet>
         </v-col>
@@ -84,20 +76,35 @@
         <!-- email -->
         <v-col cols="12" md="12">
           <v-sheet class="pl-2 pr-2">
-            <v-text-field v-model="email" :rules="[required]" label="Correo" clearable>
+            <v-text-field v-model="empresaStore.empresa.email" :rules="[rules.max50]" label="Correo"
+              variant="underlined" clearable prepend-icon="mdi-email-outline">
+            </v-text-field>
+          </v-sheet>
+        </v-col>
+
+        <!-- wifi_usuario -->
+        <v-col cols="12" md="6">
+          <v-sheet class="pl-2 pr-2">
+            <v-text-field v-model="empresaStore.empresa.wifi_usuario" :rules="[rules.max50]" label="Wifi usuario"
+              variant="underlined" clearable prepend-icon="mdi-wifi">
+            </v-text-field>
+          </v-sheet>
+        </v-col>
+
+        <!-- wifi_clave -->
+        <v-col cols="12" md="6">
+          <v-sheet class="pl-2 pr-2">
+            <v-text-field v-model="empresaStore.empresa.wifi_clave" :rules="[rules.max50]" label="Wifi clave"
+              variant="underlined" clearable prepend-icon="mdi-lock-outline">
             </v-text-field>
           </v-sheet>
         </v-col>
       </v-row>
-
-      <br />
-
-      <v-btn :disabled="!form" color="success" type="submit" variant="elevated" block>
-        Agregar
-      </v-btn>
     </v-form>
   </v-container>
 
+  <Dialog :show="dialogShow" :titulo="dialogTitulo" :mensaje="dialogMensaje" @dialogCerrar="dialogShow = false">
+  </Dialog>
 </template>
 
 <script setup>
@@ -106,69 +113,92 @@ import { supabase } from '../lib/supabase'
 import { useErrorHandler } from '@/composables/errorHandler'
 import Dialog from '@/components/Dialog.vue';
 import { useEmpresaStore } from "../stores/empresa";
+import { useRouter, useRoute } from 'vue-router'
 
+const router = useRouter()
+const route = useRoute()
+
+const empresaStore = useEmpresaStore()
 const form = ref(false);
-const nombre = ref('');
-const descripcion = ref('');
-const categorias = ref([]);
-const categoria = ref();
-const precio = ref();
-const items = ref([]);
+const empresa = ref({});
+
+const dialogShow = ref(false);
+const dialogTitulo = ref('Empresa');
+const dialogMensaje = ref('');
+
 const rules = ref({
-  required: (value) => !!value || 'Required.',
-  min: (v) => v.length >= 8 || 'Min 8 characters',
+  required: (value) => !!value || 'Obligatorio',
+  min8: (v) => v.length >= 8 || 'Min 8 caracteres',
+  max20: value => value.length <= 20 || 'Max 20 caracteres',
+  max50: value => (value == undefined || value.length <= 50) || 'Max 50 caracteres',
 });
+
 const imageUrl = ref('');
 const image = ref('');
-const preview = ref('https://cdn.vuetifyjs.com/images/parallax/material.jpg');
+const preview = ref('');
 
 onMounted(() => {
   // getEmpresa();
 });
 
-function required(v) {
-  return !!v || 'Requerido';
-}
+const getImage = computed(() => {
+  var logo = empresaStore.empresa.logo;
+  return logo != '' && logo != null ? logo : preview.value;
+})
 
-async function getCategorias() {
-  let { data, error, status } = await supabase
-    .from('Categoria')
-    .select(`id, nombre`);
-
-  categorias.value = data;
-}
-
-function onSubmit() {
+async function onSubmit() {
   if (!form.value) return;
-  updateEmpresa();
+  await updateEmpresa();
+  //await getEmpresa();
 }
 
 async function updateEmpresa() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  const { error } = await supabase.from('Item').insert({
-    nombre: nombre.value,
-    descripcion: descripcion.value,
-    id_categoria: categoria.value,
-    foto: imageUrl.value,
-    precio: precio.value,
-    user_id: user.id,
-  });
+    if (user == null) {
+      router.push('/');
+    }
 
-  if (error) {
-    console.log(`Error: ${JSON.stringify(error)}`);
-    return;
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        nombre: empresaStore.empresa.nombre,
+        descripcion: empresaStore.empresa.descripcion,
+        direccion: empresaStore.empresa.direccion,
+        telefono: empresaStore.empresa.telefono,
+        celular: empresaStore.empresa.celular,
+        web: empresaStore.empresa.web,
+        email: empresaStore.empresa.email,
+        wifi_usuario: empresaStore.empresa.wifi_usuario,
+        wifi_clave: empresaStore.empresa.wifi_clave,
+        logo: imageUrl.value != '' ? imageUrl.value : empresaStore.empresa.logo,
+      })
+      .eq('id', user.id);
+
+    if (error) throw error
+
+    dialogShow.value = true;
+    dialogMensaje.value = 'Los datos se actualizaron correctamente';
+  } catch (error) {
+    console.log(`Error en updateEmpresa: ${useErrorHandler(error)}`);
   }
+}
 
-  nombre.value = '';
-  descripcion.value = '';
-  categoria.value = '';
-  preview.value = null;
-  precio.value = '';
+async function getEmpresa() {
+  try {
+    const { data, error } = await supabase.from('profiles').select().single();
+    empresa.value = data;
+    empresaStore.empresa = data;
 
-  getItems();
+    if (data.logo == '' || data.logo == null) {
+      empresaStore.empresa.logo = empresaStore.defaultFoto;
+    }
+  } catch (error) {
+    console.log(`Error en updateEmpresa: ${useErrorHandler(error)}`);
+  }
 }
 
 function onFilePicked(event) {
@@ -178,6 +208,7 @@ function onFilePicked(event) {
   fileReader.addEventListener('load', () => {
     imageUrl.value = fileReader.result;
     preview.value = fileReader.result;
+    empresaStore.empresa.logo = preview.value;
   });
   fileReader.readAsDataURL(files[0]);
   image.value = files[0];

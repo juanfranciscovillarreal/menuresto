@@ -4,12 +4,13 @@
             <v-btn icon v-bind="props" class="mr-2">
                 <v-icon icon="mdi-account"></v-icon>
             </v-btn>
+
         </template>
         <v-card>
-            <v-card-text>
+            <!-- <v-card-text>
                 <div class="mx-auto text-center">
-                    <v-avatar color="black">
-                        <v-icon icon="mdi-account"></v-icon>
+                    <v-avatar size="50">
+                        <v-img :width="50" aspect-ratio="1/1" cover :src="empresaStore.empresa.logo"></v-img>
                     </v-avatar>
                     <h3>{{ props.nombre }}</h3>
                     <p class="text-caption mt-1">
@@ -17,15 +18,14 @@
                     </p>
                     <v-divider></v-divider>
                 </div>
-            </v-card-text>
-
+            </v-card-text> -->
 
             <v-list :lines="false" density="compact" nav>
                 <v-list-item to="/Empresa" link>
                     <template v-slot:prepend>
                         <v-icon icon="mdi-account"></v-icon>
                     </template>
-                    <v-list-item-title>Mi cuenta</v-list-item-title>
+                    <v-list-item-title>Perfil</v-list-item-title>
                 </v-list-item>
 
                 <v-list-item link @click="signOut()">

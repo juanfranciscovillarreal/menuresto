@@ -112,6 +112,10 @@ const routes = [
     name: 'Empresa',
     component: Empresa,
   },  
+  {
+    path: '/menu',
+    component: Menu,
+  },
 
   {
     path: '/Menu/:empresa',

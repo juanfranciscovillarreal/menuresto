@@ -137,6 +137,12 @@ const imageUrl = ref('');
 const image = ref('');
 const preview = ref('');
 
+const open = shallowRef(false)
+    const fabPosition = shallowRef('absolute')
+    const menuLocation = shallowRef('left center')
+    const fabLocation = shallowRef('right bottom')
+    const transition = shallowRef('slide-y-reverse-transition')
+
 onMounted(() => {
   // getEmpresa();
 });

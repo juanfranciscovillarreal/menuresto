@@ -68,6 +68,7 @@
 
   <v-main>
     <router-view />
+    <FloatingButtons></FloatingButtons>
   </v-main>
 
 </template>
@@ -83,6 +84,7 @@ import { supabase } from '../lib/supabase'
 import { useErrorHandler } from '@/composables/errorHandler'
 import  Usuario  from "../components/Usuario.vue";
 import imgUrl from '../assets/InteliCarta.png'
+import FloatingButtons from '@/components/FloatingButtons.vue';
 
 const router = useRouter()
 const route = useRoute()

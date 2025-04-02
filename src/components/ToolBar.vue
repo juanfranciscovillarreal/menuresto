@@ -7,7 +7,7 @@
         <v-toolbar-title>{{ props.titulo }}</v-toolbar-title>
 
         <v-spacer></v-spacer>
-        <v-btn v-if="props.icono != null" :icon="props.icono" @click="$emit('guardar')"></v-btn>
+        <v-btn v-if="props.icono != null" :icon="props.icono" @click="$emit('evento_click')"></v-btn>
 
         <template v-slot:extension v-if="nuevo">
             <v-fab 

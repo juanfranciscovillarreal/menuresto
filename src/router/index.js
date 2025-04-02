@@ -58,6 +58,7 @@ import Categoria from '../pages/Categoria.vue'
 import Item from '@/pages/Item.vue'
 import NewPass from '@/pages/NewPass.vue'
 import Empresa from '@/pages/Empresa.vue'
+import MenuAbm from '@/pages/MenuAbm.vue'
 
 const routes = [
   {
@@ -113,8 +114,9 @@ const routes = [
     component: Empresa,
   },  
   {
-    path: '/menu',
-    component: Menu,
+    path: '/menuabm',
+    name: 'MenuAbm',
+    component: MenuAbm,
   },
 
   {

@@ -1,5 +1,5 @@
 <template>
-  <ToolBar titulo="Perfil" ruta="/Administracion" icono="mdi-content-save" @guardar="onSubmit"></ToolBar>
+  <ToolBar titulo="Perfil" ruta="/Administracion" icono="mdi-content-save" @evento_click="onSubmit"></ToolBar>
 
   <div class="d-flex align-center justify-space-around mt-2">
     <v-avatar size="100">

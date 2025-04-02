@@ -94,8 +94,9 @@ const empresaStore = useEmpresaStore()
 const drawer = ref(false)
 const links = ref([
   ["Inicio", "mdi-home", "/Administracion"],
-  ["Categorias", "mdi-library", "/Categoria"],
-  ["Items", "mdi-map-marker", "/Item"],
+  ["Categorias", "mdi-format-list-text", "/Categoria"],
+  ["Items", "mdi-order-bool-descending-variant", "/Item"],
+  ["Menu", "mdi-silverware", "/MenuAbm"],
   ["Divider", "", ""],
   ["Configuracion", "mdi-cog", "/Configuracion"],
 ])

@@ -3,7 +3,11 @@
   </ToolBar>
 
   <v-data-table :headers="categoriasHeaders" :items="menu" item-value="id" show-expand hide-default-footer
-    hide-default-header>
+    hide-default-header :loading="loadingMenu">
+
+    <template v-slot:loading>
+      <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+    </template>
 
     <!-- Categorías -->
     <template v-slot:item.data-table-expand="{ internalItem, isExpanded, toggleExpand }">
@@ -16,9 +20,14 @@
 
         <v-icon color="medium-emphasis" icon="mdi-plus" size="small" @click="addItem(internalItem.value)"></v-icon>
 
-        <v-icon color="medium-emphasis" size="small" @click="toggleExpand(internalItem)">
+        <!-- <v-icon color="medium-emphasis" size="small" @click="toggleExpand(internalItem)">
           {{ isExpanded(internalItem) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-        </v-icon>
+        </v-icon> -->
+
+        <v-btn :icon="isExpanded(internalItem) ? 'mdi-chevron-up' : 'mdi-chevron-down'" color="medium-emphasis"
+          density="comfortable" size="small" variant="outlined" @click="toggleExpand(internalItem)">
+        </v-btn>
+
       </div>
     </template>
 
@@ -149,6 +158,7 @@ const empresaStore = useEmpresaStore()
 const categorias = ref([]);
 const items = ref([]);
 const menu = ref([]);
+const loadingMenu = ref(false)
 
 const rules = ref({
   required: (value) => !!value || 'Obligatorio',
@@ -398,8 +408,12 @@ async function updateItem() {
 }
 
 async function getMenu() {
+  loadingMenu.value = true;
+
   const { data, error } = await supabase.from('Categoria').select(`id, nombre,
            Item (id, id_categoria, nombre, descripcion, precio, foto)`);
+           
+  loadingMenu.value = false;
 
   if (error) throw error;
 

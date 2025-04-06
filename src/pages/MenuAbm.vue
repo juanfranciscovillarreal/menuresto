@@ -1,10 +1,11 @@
 <template>
   <ToolBar titulo="Menú" ruta="/Administracion" icono="mdi-playlist-plus" @evento_click="addCategoria" color="#9ACA3C">
   </ToolBar>
-  <!-- <ToolBar titulo="Categorías" ruta="/Administracion" :nuevo="true" @verDialogo="add()"></ToolBar> -->
 
   <v-data-table :headers="categoriasHeaders" :items="menu" item-value="id" show-expand hide-default-footer
     hide-default-header>
+
+    <!-- Categorías -->
     <template v-slot:item.data-table-expand="{ internalItem, isExpanded, toggleExpand }">
       <div class="d-flex ga-2 justify-end">
         <v-icon color="medium-emphasis" icon="mdi-pencil" size="small"
@@ -21,6 +22,7 @@
       </div>
     </template>
 
+    <!-- Items -->
     <template v-slot:expanded-row="{ columns, item }">
       <tr>
         <td :colspan="columns.length" class="pl-2">
@@ -43,23 +45,27 @@
         </td>
       </tr>
     </template>
-
   </v-data-table>
 
-
   <!-- Diálogo Categoría -->
-  <v-dialog v-model="dialogCategoria" max-width="500">
+  <v-dialog v-model="dialogCategoria" transition="dialog-bottom-transition" max-width="800">
     <v-form v-model="formCategoria" @submit.prevent="onSubmitCategoria">
-      <v-card :title="getDialogTitle('Categoría')">
-        <template v-slot:text>
-          <v-row>
+      <v-card>
+        <v-card-title class="bg-surface-light">
+          {{ getDialogTitle('Categoría') }}
+        </v-card-title>
+
+        <v-card-text>
+          <!-- nombre -->
+          <v-row no-gutters>
+            <!-- nombre -->
             <v-col cols="12" md="6">
-              <v-text-field v-model="recordCategoria.nombre" label="Nombre" variant="underlined"
-                :rules="[rules.required, rules.max50]">
+              <v-text-field v-model="recordCategoria.nombre" :rules="[rules.required, rules.max50]" label="Nombre"
+                variant="underlined" clearable prepend-icon="mdi-tag-text">
               </v-text-field>
             </v-col>
           </v-row>
-        </template>
+        </v-card-text>
 
         <v-divider></v-divider>
 
@@ -73,46 +79,57 @@
   </v-dialog>
 
   <!-- Diálogo Item -->
-  <v-dialog v-model="dialogItem" max-width="500">
-    <v-form v-model="formItem" @submit.prevent="onSubmitItem">
-      <v-card :title="getDialogTitle('Item')">
-        <template v-slot:text>
-          <v-row>
-            <v-col cols="12" md="4">
-              <v-text-field v-model="recordItem.nombre" :rules="[rules.required, rules.max50]" class="mb-2"
-                label="Nombre" clearable></v-text-field>
-            </v-col>
+  <div class="text-center pa-4">
+    <v-dialog v-model="dialogItem" transition="dialog-bottom-transition" max-width="800">
+      <v-form v-model="formItem" @submit.prevent="onSubmitItem">
+        <v-card>
+          <v-card-title class="bg-surface-light">
+            {{ getDialogTitle('Item') }}
+          </v-card-title>
 
-            <v-col cols="12" md="4">
-              <v-text-field v-model="recordItem.descripcion" :rules="[rules.max50]" class="mb-2" label="Descripción"
-                clearable></v-text-field>
-            </v-col>
+          <v-card-text>
+            <!-- Avatar -->
+            <v-row no-gutters>
+              <v-col cols="12">
+                <Avatar :avatar="recordItem.foto" @onUpdateAvatar="updateAvatar"></Avatar>
+              </v-col>
+            </v-row>
 
-            <v-col cols="12" md="4">
-              <v-text-field v-model="recordItem.precio" :rules="[rules.required, rules.mayor0]" class="mb-2"
-                label="Precio" clearable></v-text-field>
-            </v-col>
-          </v-row>
+            <v-row no-gutters>
+              <!-- nombre -->
+              <v-col cols="12" md="4">
+                <v-text-field v-model="recordItem.nombre" :rules="[rules.required, rules.max50]" label="Nombre"
+                  variant="underlined" clearable prepend-icon="mdi-tag-text">
+                </v-text-field>
+              </v-col>
 
-          <v-row>
-            <v-col cols="12" md="12">
-              <v-file-input accept="image/*" label="File input" @change="onFilePicked"></v-file-input>
+              <!-- descripcion -->
+              <v-col cols="12" md="4">
+                <v-text-field v-model="recordItem.descripcion" :rules="[rules.required, rules.max50]"
+                  label="Descripción" variant="underlined" clearable prepend-icon="mdi-text">
+                </v-text-field>
+              </v-col>
 
-              <v-img :width="100" aspect-ratio="1/1" cover :src="preview"></v-img>
-            </v-col>
-          </v-row>
-        </template>
+              <!-- precio -->
+              <v-col cols="12" md="4">
+                <v-text-field v-model="recordItem.precio" :rules="[rules.required]" label="Precio" variant="underlined"
+                  clearable prepend-icon="mdi-currency-usd">
+                </v-text-field>
+              </v-col>
+            </v-row>
+          </v-card-text>
 
-        <v-divider></v-divider>
+          <v-divider></v-divider>
 
-        <v-card-actions class="bg-surface-light">
-          <v-btn text="Cancelar" variant="plain" @click="dialogItem = false"></v-btn>
-          <v-spacer></v-spacer>
-          <v-btn type="submit" text="Aceptar" color="primary"></v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-form>
-  </v-dialog>
+          <v-card-actions class="bg-surface-light">
+            <v-btn text="Cancelar" variant="plain" @click="dialogItem = false"></v-btn>
+            <v-spacer></v-spacer>
+            <v-btn type="submit" text="Aceptar" color="primary"></v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
+    </v-dialog>
+  </div>
 
   <Dialog :show="dialogShow" :titulo="dialogTitulo" :mensaje="dialogMensaje" @dialogCerrar="dialogShow = false">
   </Dialog>
@@ -122,11 +139,13 @@
 import { onMounted, ref, shallowRef } from 'vue';
 import { useDate } from 'vuetify';
 import { supabase } from '../lib/supabase'
-// import { useCategoriaStore } from '../stores/categoria';
+import { useEmpresaStore } from "../stores/empresa";
 import { useErrorHandler } from '../composables/errorHandler';
 import Dialog from '../components/Dialog.vue';
 import ToolBar from '../components/ToolBar.vue';
+import imgUrl from '../assets/image.png'
 
+const empresaStore = useEmpresaStore()
 const categorias = ref([]);
 const items = ref([]);
 const menu = ref([]);
@@ -137,21 +156,14 @@ const rules = ref({
   mayor0: (v) => v.length > 0 || 'Sólo números positivos',
   max20: (value) => value.length <= 20 || 'Max 20 caracteres',
   max50: (value) =>
-    value == undefined || value.length <= 50 || 'Max 50 caracteres',
+    (value == undefined || value.length <= 50) || 'Max 50 caracteres',
 });
 
 const dialogShow = ref(false);
 const dialogTitulo = ref('Empresa');
 const dialogMensaje = ref('');
-
 const formCategoria = ref(false);
 const formItem = ref(false);
-
-//const imageUrl = ref('');
-const image = ref('');
-const preview = ref('https://cdn.vuetifyjs.com/images/parallax/material.jpg');
-/* -------------------------------- */
-
 const adapter = useDate();
 const DEFAULT_RECORD = ref({
   id: '',
@@ -162,7 +174,7 @@ const DEFAULT_RECORD_ITEM = ref({
   nombre: '',
   descripcion: '',
   id_categoria: 0,
-  foto: '',
+  foto: imgUrl,
   precio: '',
 });
 const books = ref([]);
@@ -194,11 +206,14 @@ const categoriasHeaders = ref([
   },
 ]);
 
-
 onMounted(() => {
   getCategorias();
   getMenu();
 });
+
+function updateAvatar(avatar) {
+  recordItem.value.imageUrl = avatar;
+}
 
 function getDialogTitle(nombre) {
   return isEditing.value ? `Editar ${nombre}` : `Agregar ${nombre}`;
@@ -248,8 +263,10 @@ function editCategoria(id) {
 
 function editItem(item) {
   isEditing.value = true;
+  if (item.foto == '' || item.foto == null) {
+    item.foto = imgUrl;
+  }
   recordItem.value = { ...item };
-  preview.value = recordItem.value.foto;
   dialogItem.value = true;
 }
 
@@ -267,8 +284,6 @@ async function removeCategoria(id) {
 
     await getCategorias();
     await getMenu();
-
-    //console.log(`Categoría eliminada: ${recordCategoria.value.id} - ${recordCategoria.value.nombre}`);
   } catch (error) {
     dialogShow.value = true;
     dialogMensaje.value = useErrorHandler(error);
@@ -312,7 +327,6 @@ async function saveItem() {
     } else {
       await insertItem();
     }
-    // await getItems();
     await getMenu();
     dialogItem.value = false;
   } catch (error) {
@@ -329,7 +343,6 @@ async function getCategorias() {
   if (error) throw error;
 
   categorias.value = data;
-  //console.log(`Categorías obtenidas: ${JSON.stringify(data)}`);
 }
 
 async function insertCategoria() {
@@ -347,16 +360,6 @@ async function updateCategoria() {
     .eq('id', recordCategoria.value.id);
 
   if (error) throw error;
-}
-
-async function getItems() {
-  let { data, error, status } = await supabase
-    .from('Item')
-    .select(`id, nombre, descripcion, foto`);
-  // .eq('id', 1);
-  // .single();
-
-  items.value = data;
 }
 
 async function insertItem() {
@@ -401,48 +404,5 @@ async function getMenu() {
   if (error) throw error;
 
   menu.value = data;
-
-  // console.log(`Menu: ${JSON.stringify(data)}`);
-}
-
-function onFilePicked(event) {
-  const files = event.target.files;
-  let filename = files[0].name;
-  const fileReader = new FileReader();
-  fileReader.addEventListener('load', () => {
-    // imageUrl.value = fileReader.result;
-    preview.value = fileReader.result;
-    recordItem.value.imageUrl = fileReader.result;
-  });
-  fileReader.readAsDataURL(files[0]);
-  image.value = files[0];
-}
-
-async function getMenu_old() {
-  let { data, error, status } = await supabase
-    .from('Menu')
-    .select(
-      `
-  Categoria (
-    id,
-    nombre,
-      Item (
-        id,
-        nombre
-      )
-    )`
-    )
-    .eq('id', 3);
-  //.single()
-
-  menu.value = data;
-
-  console.log(`Menu: ${JSON.stringify(data)}`);
 }
 </script>
-
-<style lang="css" scoped>
-.my-header-style {
-  background-color: #666fff;
-}
-</style>

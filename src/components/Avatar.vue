@@ -6,7 +6,7 @@
     </div>
 
     <div class="d-flex align-center justify-space-around position-relative" style="top: -1em; left: 3em;">
-        <v-file-input accept="image/*" prepend-icon="mdi-camera" hide-input @change="onFilePicked">
+        <v-file-input accept="image/*" prepend-icon="mdi-plus-box" hide-input @change="onFilePicked">
         </v-file-input>
     </div>
 </template>

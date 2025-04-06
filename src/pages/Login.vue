@@ -51,6 +51,7 @@ import { useErrorHandler } from '@/composables/errorHandler'
 import Dialog from '@/components/Dialog.vue';
 import { useUsuarioStore } from "../stores/usuario";
 import { useEmpresaStore } from "../stores/empresa";
+import imgUrl from '../assets/InteliCarta.png'
 
 const usuarioStore = useUsuarioStore()
 const empresaStore = useEmpresaStore()
@@ -62,7 +63,6 @@ const visible = ref(false);
 const dialogShow = ref(false);
 const dialogTitulo = ref('Inicio de sesión');
 const dialogMensaje = ref('');
-
 
 const rules = ref({
     required: (value) => !!value || 'Required.',
@@ -116,7 +116,7 @@ async function getEmpresa() {
         empresaStore.empresa = data;
 
         if (data.logo == '' || data.logo == null) {
-            empresaStore.empresa.logo = empresaStore.defaultFoto;
+            empresaStore.empresa.logo = imgUrl;
         }
 
     } catch (error) {

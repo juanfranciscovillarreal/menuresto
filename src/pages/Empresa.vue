@@ -1,16 +1,7 @@
 <template>
   <ToolBar titulo="Perfil" ruta="/Administracion" icono="mdi-content-save" @evento_click="onSubmit"></ToolBar>
 
-  <div class="d-flex align-center justify-space-around mt-2">
-    <v-avatar size="100">
-      <v-img :width="100" aspect-ratio="1/1" cover :src="getImage"></v-img>
-    </v-avatar>
-  </div>
-
-  <div class="d-flex align-center justify-space-around position-relative" style="top: -1em; left: 3em;">
-    <v-file-input accept="image/*" prepend-icon="mdi-camera" hide-input @change="onFilePicked">
-    </v-file-input>
-  </div>
+  <Avatar :avatar="getImage" @onUpdateAvatar="updateAvatar"></Avatar>
 
   <v-container class="pt-0">
     <v-form v-model="form" @submit.prevent="onSubmit">
@@ -114,14 +105,13 @@ import { useErrorHandler } from '@/composables/errorHandler'
 import Dialog from '@/components/Dialog.vue';
 import { useEmpresaStore } from "../stores/empresa";
 import { useRouter, useRoute } from 'vue-router'
+import Avatar from '@/components/Avatar.vue';
 
 const router = useRouter()
 const route = useRoute()
 
 const empresaStore = useEmpresaStore()
 const form = ref(false);
-const empresa = ref({});
-
 const dialogShow = ref(false);
 const dialogTitulo = ref('Empresa');
 const dialogMensaje = ref('');
@@ -133,29 +123,21 @@ const rules = ref({
   max50: value => (value == undefined || value.length <= 50) || 'Max 50 caracteres',
 });
 
-const imageUrl = ref('');
-const image = ref('');
-const preview = ref('');
-
-const open = shallowRef(false)
-    const fabPosition = shallowRef('absolute')
-    const menuLocation = shallowRef('left center')
-    const fabLocation = shallowRef('right bottom')
-    const transition = shallowRef('slide-y-reverse-transition')
-
 onMounted(() => {
-  // getEmpresa();
 });
 
 const getImage = computed(() => {
   var logo = empresaStore.empresa.logo;
-  return logo != '' && logo != null ? logo : preview.value;
+  return logo;
 })
+
+function updateAvatar(avatar) {
+  empresaStore.empresa.logo = avatar;
+}
 
 async function onSubmit() {
   if (!form.value) return;
   await updateEmpresa();
-  //await getEmpresa();
 }
 
 async function updateEmpresa() {
@@ -180,7 +162,7 @@ async function updateEmpresa() {
         email: empresaStore.empresa.email,
         wifi_usuario: empresaStore.empresa.wifi_usuario,
         wifi_clave: empresaStore.empresa.wifi_clave,
-        logo: imageUrl.value != '' ? imageUrl.value : empresaStore.empresa.logo,
+        logo: empresaStore.empresa.logo,
       })
       .eq('id', user.id);
 
@@ -193,30 +175,4 @@ async function updateEmpresa() {
   }
 }
 
-async function getEmpresa() {
-  try {
-    const { data, error } = await supabase.from('profiles').select().single();
-    empresa.value = data;
-    empresaStore.empresa = data;
-
-    if (data.logo == '' || data.logo == null) {
-      empresaStore.empresa.logo = empresaStore.defaultFoto;
-    }
-  } catch (error) {
-    console.log(`Error en updateEmpresa: ${useErrorHandler(error)}`);
-  }
-}
-
-function onFilePicked(event) {
-  const files = event.target.files;
-  let filename = files[0].name;
-  const fileReader = new FileReader();
-  fileReader.addEventListener('load', () => {
-    imageUrl.value = fileReader.result;
-    preview.value = fileReader.result;
-    empresaStore.empresa.logo = preview.value;
-  });
-  fileReader.readAsDataURL(files[0]);
-  image.value = files[0];
-}
 </script>

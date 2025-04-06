@@ -141,7 +141,7 @@ async function save() {
   } catch (error) {
     dialog.value = false;
     dialogShow.value = true;
-    dialogMensaje.value = `Error en insertCategoria: ${error}`;
+    dialogMensaje.value = useErrorHandler(error);
   }
 }
 
@@ -161,9 +161,7 @@ async function insertCategoria() {
     nombre: record.value.nombre,
   });
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 }
 
 async function updateCategoria() {

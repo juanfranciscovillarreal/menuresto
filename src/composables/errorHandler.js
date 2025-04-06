@@ -20,6 +20,11 @@ export function useErrorHandler(error) {
     case "23503": // Error de foreing key
       message.value = 'No es posible eliminar la Categoría ya que está siendo utilizada por un Item';
       break;
+
+      case "42501": // new row violates row-level security policy for table ...'
+      message.value = 'Debe iniciar sesión';
+      break;
+
     default:
       message.value = error.message;
       break;

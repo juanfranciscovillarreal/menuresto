@@ -113,7 +113,11 @@ watch(drawer, (newValue, oldValue) => {
 })
 
 function getImage(){
-  return empresaStore.empresa.logo != '' ? empresaStore.empresa.logo : imgUrl;
+  if(empresaStore.empresa.logo == ''){
+    empresaStore.empresa.logo = imgUrl;
+  }
+
+  return empresaStore.empresa.logo; 
 }
 async function signOut() {
   try {

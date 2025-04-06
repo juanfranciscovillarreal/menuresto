@@ -143,6 +143,8 @@
     const {
       data: { user },
     } = await supabase.auth.getUser();
+
+    if(!user) throw 'Debe iniciar sesión';
   
     const { error } = await supabase.from('Item').insert({
       nombre: nombre.value,
@@ -150,7 +152,6 @@
       id_categoria: categoria.value,
       foto: imageUrl.value,
       precio: precio.value,
-      user_id: user.id,
     });
   
     if (error) {

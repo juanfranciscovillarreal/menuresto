@@ -52,7 +52,9 @@ import Dialog from '@/components/Dialog.vue';
 import { useUsuarioStore } from "../stores/usuario";
 import { useEmpresaStore } from "../stores/empresa";
 import imgUrl from '../assets/InteliCarta.png'
+import { useEmpresa } from '../composables/empresa';
 
+const { getEmpresa} = useEmpresa();
 const usuarioStore = useUsuarioStore()
 const empresaStore = useEmpresaStore()
 const router = useRouter();
@@ -83,7 +85,7 @@ async function onSubmit() {
 
     try {
         await signInWithEmail();
-        await getEmpresa();
+        await getEmpresaData();
     } catch (error) {
         dialogShow.value = true;
         dialogMensaje.value = useErrorHandler(error);
@@ -103,22 +105,12 @@ async function signInWithEmail() {
     router.push('/Administracion');
 }
 
-async function getEmpresa() {
+async function getEmpresaData() {
     try {
-        let { data, error, status } = await supabase
-            .from('profiles')
-            .select()
-            .eq('id', empresaStore.empresa.id)
-            .single();
-
-        if (error) throw error
-
-        empresaStore.empresa = data;
-
-        if (data.logo == '' || data.logo == null) {
+        empresaStore.empresa = await getEmpresa(empresaStore.empresa.id);
+        if (empresaStore.empresa.logo == '' || empresaStore.empresa.logo == null) {
             empresaStore.empresa.logo = imgUrl;
         }
-
     } catch (error) {
         dialogShow.value = true;
         dialogMensaje.value = useErrorHandler(error);

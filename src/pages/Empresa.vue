@@ -1,5 +1,6 @@
 <template>
-  <ToolBar titulo="Perfil" ruta="/Administracion" icono="mdi-content-save" @evento_click="onSubmit"></ToolBar>
+  <!-- <ToolBar titulo="Perfil" ruta="/Administracion" icono="mdi-content-save" @evento_click="onSubmit"></ToolBar> -->
+  <ToolBar titulo="Perfil" ruta="/Administracion"></ToolBar>
 
   <Avatar :avatar="getImage" @onUpdateAvatar="updateAvatar"></Avatar>
 
@@ -9,7 +10,7 @@
         <!-- nombre -->
         <v-col cols="12" md="4">
           <v-sheet class="pl-2 pr-2">
-            <v-text-field v-model="empresaStore.empresa.nombre" :rules="rules[required, rules.max50]" label="Nombre"
+            <v-text-field v-model="empresaStore.empresa.nombre" :rules="[rules.required, rules.max50]" label="Nombre"
               variant="underlined" clearable prepend-icon="mdi-account-outline">
             </v-text-field>
           </v-sheet>
@@ -91,6 +92,10 @@
           </v-sheet>
         </v-col>
       </v-row>
+
+      <!-- aceptar -->
+      <v-btn type="submit" block class="mt-4">Aceptar</v-btn>
+
     </v-form>
   </v-container>
 
@@ -106,14 +111,16 @@ import Dialog from '@/components/Dialog.vue';
 import { useEmpresaStore } from "../stores/empresa";
 import { useRouter, useRoute } from 'vue-router'
 import Avatar from '@/components/Avatar.vue';
+import { useEmpresa } from '../composables/empresa';
 
+const { updateEmpresa } = useEmpresa();
 const router = useRouter()
 const route = useRoute()
 
 const empresaStore = useEmpresaStore()
 const form = ref(false);
 const dialogShow = ref(false);
-const dialogTitulo = ref('Empresa');
+const dialogTitulo = ref('Perfil');
 const dialogMensaje = ref('');
 
 const rules = ref({
@@ -137,42 +144,37 @@ function updateAvatar(avatar) {
 
 async function onSubmit() {
   if (!form.value) return;
-  await updateEmpresa();
-}
 
-async function updateEmpresa() {
   try {
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (user == null) {
-      router.push('/');
+      //router.push('/');
+      throw 'Error';
     }
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        nombre: empresaStore.empresa.nombre,
-        descripcion: empresaStore.empresa.descripcion,
-        direccion: empresaStore.empresa.direccion,
-        telefono: empresaStore.empresa.telefono,
-        celular: empresaStore.empresa.celular,
-        web: empresaStore.empresa.web,
-        email: empresaStore.empresa.email,
-        wifi_usuario: empresaStore.empresa.wifi_usuario,
-        wifi_clave: empresaStore.empresa.wifi_clave,
-        logo: empresaStore.empresa.logo,
-      })
-      .eq('id', user.id);
-
-    if (error) throw error
+    let empresa = {
+      id: user.id,
+      nombre: empresaStore.empresa.nombre,
+      descripcion: empresaStore.empresa.descripcion,
+      direccion: empresaStore.empresa.direccion,
+      telefono: empresaStore.empresa.telefono,
+      celular: empresaStore.empresa.celular,
+      web: empresaStore.empresa.web,
+      email: empresaStore.empresa.email,
+      wifi_usuario: empresaStore.empresa.wifi_usuario,
+      wifi_clave: empresaStore.empresa.wifi_clave,
+      logo: empresaStore.empresa.logo,
+    }
+    await updateEmpresa(empresa);
 
     dialogShow.value = true;
     dialogMensaje.value = 'Los datos se actualizaron correctamente';
   } catch (error) {
-    console.log(`Error en updateEmpresa: ${useErrorHandler(error)}`);
+    dialogShow.value = true;
+    dialogMensaje.value = useErrorHandler(error);
   }
 }
-
 </script>

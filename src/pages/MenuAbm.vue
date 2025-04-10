@@ -1,60 +1,72 @@
 <template>
-  <ToolBar titulo="Menú" ruta="/Administracion" icono="mdi-playlist-plus" @evento_click="addCategoria" color="#9ACA3C">
-  </ToolBar>
+  <v-card>
+    <ToolBar titulo="Menú" ruta="/Administracion" :nuevo="true" @verDialogo="addCategoria()"></ToolBar>
 
-  <v-data-table :headers="categoriasHeaders" :items="menu" item-value="id" show-expand hide-default-footer
-    hide-default-header :loading="loadingMenu">
+    <v-row no-gutters>
+      <v-col cols="12">
+        <!-- Buscar -->
+        <v-text-field v-model="filter" @keyup="filtrar" prepend-inner-icon="mdi-magnify" label="Buscar" single-line
+          hide-details clearable @click:clear="listar">
+        </v-text-field>
+      </v-col>
+    </v-row>
 
-    <template v-slot:loading>
-      <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
-    </template>
+    <v-row no-gutters>
+      <v-col lg="6" md="6" sm="12">
+        <v-data-table :headers="categoriasHeaders" :items="listaMenu" item-value="id" show-expand hide-default-footer
+          hide-default-header :loading="loadingMenu">
 
-    <!-- Categorías -->
-    <template v-slot:item.data-table-expand="{ internalItem, isExpanded, toggleExpand }">
-      <div class="d-flex ga-2 justify-end">
-        <v-icon color="medium-emphasis" icon="mdi-pencil" size="small"
-          @click="editCategoria(internalItem.value)"></v-icon>
+          <template v-slot:loading>
+            <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+          </template>
 
-        <v-icon color="medium-emphasis" icon="mdi-delete" size="small"
-          @click="removeCategoria(internalItem.value)"></v-icon>
+          <!-- Categorías -->
+          <template v-slot:item.data-table-expand="{ internalItem, isExpanded, toggleExpand }">
+            <div class="d-flex ga-2 justify-end">
+              <v-icon color="medium-emphasis" icon="mdi-pencil" size="small"
+                @click="editCategoria(internalItem.value)"></v-icon>
 
-        <v-icon color="medium-emphasis" icon="mdi-plus" size="small" @click="addItem(internalItem.value)"></v-icon>
+              <v-icon color="medium-emphasis" icon="mdi-delete" size="small"
+                @click="deleteCategoria(internalItem.value)"></v-icon>
 
-        <!-- <v-icon color="medium-emphasis" size="small" @click="toggleExpand(internalItem)">
-          {{ isExpanded(internalItem) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-        </v-icon> -->
+              <v-icon color="medium-emphasis" icon="mdi-plus" size="small"
+                @click="addItem(internalItem.value)"></v-icon>
 
-        <v-btn :icon="isExpanded(internalItem) ? 'mdi-chevron-up' : 'mdi-chevron-down'" color="medium-emphasis"
-          density="comfortable" size="small" variant="outlined" @click="toggleExpand(internalItem)">
-        </v-btn>
+              <v-btn :icon="isExpanded(internalItem) ? 'mdi-chevron-up' : 'mdi-chevron-down'" color="medium-emphasis"
+                density="comfortable" size="small" variant="outlined" @click="toggleExpand(internalItem)">
+              </v-btn>
 
-      </div>
-    </template>
+            </div>
+          </template>
 
-    <!-- Items -->
-    <template v-slot:expanded-row="{ columns, item }">
-      <tr>
-        <td :colspan="columns.length" class="pl-2">
-          <v-table density="compact">
-            <tbody>
-              <tr v-for="item in item.Item" :key="item.name">
-                <td>{{ item.nombre }}</td>
-                <td>{{ item.precio }}</td>
-                <td>
-                  <div class="d-flex ga-2 justify-end">
-                    <v-icon color="medium-emphasis" icon="mdi-pencil" size="small" @click="editItem(item)"></v-icon>
+          <!-- Items -->
+          <template v-slot:expanded-row="{ columns, item }">
+            <tr>
+              <td :colspan="columns.length" class="pl-2">
+                <v-table density="compact">
+                  <tbody>
+                    <tr v-for="item in item.Item" :key="item.name">
+                      <td>{{ item.nombre }}</td>
+                      <td>{{ item.precio }}</td>
+                      <td>
+                        <div class="d-flex ga-2 justify-end">
+                          <v-icon color="medium-emphasis" icon="mdi-pencil" size="small"
+                            @click="editItem(item)"></v-icon>
 
-                    <v-icon color="medium-emphasis" icon="mdi-delete" size="small"
-                      @click="removeItem(item.id)"></v-icon>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </v-table>
-        </td>
-      </tr>
-    </template>
-  </v-data-table>
+                          <v-icon color="medium-emphasis" icon="mdi-delete" size="small"
+                            @click="deleteItem(item.id)"></v-icon>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </v-table>
+              </td>
+            </tr>
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
+  </v-card>
 
   <!-- Diálogo Categoría -->
   <v-dialog v-model="dialogCategoria" transition="dialog-bottom-transition" max-width="800">
@@ -150,10 +162,16 @@ import { useDate } from 'vuetify';
 import { supabase } from '../lib/supabase'
 import { useEmpresaStore } from "../stores/empresa";
 import { useErrorHandler } from '../composables/errorHandler';
+import { useCategoria } from '../composables/categorias';
+import { useItem } from '../composables/items';
+import { useMenu } from '../composables/menu';
 import Dialog from '../components/Dialog.vue';
 import ToolBar from '../components/ToolBar.vue';
 import imgUrl from '../assets/image.png'
 
+const { getCategorias, updateCategoria, insertCategoria, removeCategoria } = useCategoria();
+const { getItems, updateItem, insertItem, removeItem } = useItem();
+const { getMenu } = useMenu();
 const empresaStore = useEmpresaStore()
 const categorias = ref([]);
 const items = ref([]);
@@ -170,11 +188,10 @@ const rules = ref({
 });
 
 const dialogShow = ref(false);
-const dialogTitulo = ref('Empresa');
+const dialogTitulo = ref('');
 const dialogMensaje = ref('');
 const formCategoria = ref(false);
 const formItem = ref(false);
-const adapter = useDate();
 const DEFAULT_RECORD = ref({
   id: '',
   nombre: '',
@@ -215,11 +232,42 @@ const categoriasHeaders = ref([
     class: 'my-header-style',
   },
 ]);
+const filter = ref('');
+const listaMenu = ref([]);
 
-onMounted(() => {
-  getCategorias();
-  getMenu();
+onMounted(async () => {
+  try {
+    categorias.value = await getCategorias();
+    await getMenuData();
+  } catch (error) {
+    dialogShow.value = true;
+    dialogTitulo.value = "Error";
+    dialogMensaje.value = useErrorHandler(error);
+  }
 });
+
+watch(
+  menu,
+  async (newMenu, oldMenu) => {
+    listaMenu.value = newMenu;
+  },
+  { deep: true }
+);
+
+function listar() {
+  listaMenu.value = menu.value;
+}
+
+function filtrar() {
+  let filtro = filter.value.toLowerCase();
+  listaMenu.value = menu.value;
+
+  let menuFiltrado = listaMenu.value.filter((item) =>
+    item.nombre.toLowerCase().includes(filtro)
+  );
+
+  if (filtro != '') listaMenu.value = menuFiltrado;
+}
 
 function updateAvatar(avatar) {
   recordItem.value.imageUrl = avatar;
@@ -236,6 +284,7 @@ async function onSubmitCategoria() {
     await saveCategoria();
   } catch (error) {
     dialogShow.value = true;
+    dialogTitulo.value = "Categoría";
     dialogMensaje.value = useErrorHandler(error);
   }
 }
@@ -247,6 +296,7 @@ async function onSubmitItem() {
     await saveItem();
   } catch (error) {
     dialogShow.value = true;
+    dialogTitulo.value = "Item";
     dialogMensaje.value = useErrorHandler(error);
   }
 }
@@ -280,36 +330,26 @@ function editItem(item) {
   dialogItem.value = true;
 }
 
-async function removeCategoria(id) {
+async function deleteCategoria(id) {
   try {
-    const found = categorias.value.find((categoria) => categoria.id === id);
-    recordCategoria.value = { ...found };
-
-    const response = await supabase
-      .from('Categoria')
-      .delete()
-      .eq('id', recordCategoria.value.id);
-
-    if (response.error) throw response.error;
-
-    await getCategorias();
-    await getMenu();
+    await removeCategoria(id);
+    categorias.value = await getCategorias();
+    await getMenuData();
   } catch (error) {
     dialogShow.value = true;
+    dialogTitulo.value = "Categoría";
     dialogMensaje.value = useErrorHandler(error);
   }
 }
 
-async function removeItem(id) {
+async function deleteItem(id) {
   try {
-    const response = await supabase.from('Item').delete().eq('id', id);
-
-    if (response.error) throw response.error;
-
-    await getCategorias();
-    await getMenu();
+    await removeItem(id);
+    categorias.value = await getCategorias();
+    await getMenuData();
   } catch (error) {
     dialogShow.value = true;
+    dialogTitulo.value = "Item";
     dialogMensaje.value = useErrorHandler(error);
   }
 }
@@ -317,12 +357,15 @@ async function removeItem(id) {
 async function saveCategoria() {
   try {
     if (isEditing.value) {
-      await updateCategoria();
+      await updateCategoria(recordCategoria);
     } else {
-      await insertCategoria();
+      let newItem = {
+        nombre: recordCategoria.value.nombre,
+      };
+      await insertCategoria(newItem);
     }
-    await getCategorias();
-    await getMenu();
+    categorias.value = await getCategorias();
+    await getMenuData();
     dialogCategoria.value = false;
   } catch (error) {
     dialogCategoria.value = false;
@@ -333,11 +376,18 @@ async function saveCategoria() {
 async function saveItem() {
   try {
     if (isEditing.value) {
-      await updateItem();
+      await updateItem(recordItem);
     } else {
-      await insertItem();
+      let newitem = {
+        nombre: recordItem.value.nombre,
+        descripcion: recordItem.value.descripcion,
+        id_categoria: recordItem.value.id_categoria,
+        foto: recordItem.value.foto,
+        precio: recordItem.value.precio,
+      };
+      await insertItem(newitem);
     }
-    await getMenu();
+    await getMenuData();
     dialogItem.value = false;
   } catch (error) {
     dialogItem.value = false;
@@ -345,78 +395,9 @@ async function saveItem() {
   }
 }
 
-async function getCategorias() {
-  let { data, error, status } = await supabase
-    .from('Categoria')
-    .select(`id, nombre`);
-
-  if (error) throw error;
-
-  categorias.value = data;
-}
-
-async function insertCategoria() {
-  const { data, error } = await supabase.from('Categoria').insert({
-    nombre: recordCategoria.value.nombre,
-  });
-
-  if (error) throw error;
-}
-
-async function updateCategoria() {
-  const { error } = await supabase
-    .from('Categoria')
-    .update({ nombre: recordCategoria.value.nombre })
-    .eq('id', recordCategoria.value.id);
-
-  if (error) throw error;
-}
-
-async function insertItem() {
-  // const {
-  //     data: { user },
-  // } = await supabase.auth.getUser();
-
-  let record = {
-    nombre: recordItem.value.nombre,
-    descripcion: recordItem.value.descripcion,
-    id_categoria: recordItem.value.id_categoria,
-    foto: recordItem.value.imageUrl,
-    precio: recordItem.value.precio,
-  };
-
-  const { error } = await supabase.from('Item').insert(record);
-
-  if (error) throw error;
-}
-
-async function updateItem() {
-  let record = {
-    nombre: recordItem.value.nombre,
-    descripcion: recordItem.value.descripcion,
-    id_categoria: recordItem.value.id_categoria,
-    foto: recordItem.value.imageUrl,
-    precio: recordItem.value.precio,
-  };
-
-  const { error } = await supabase
-    .from('Item')
-    .update(record)
-    .eq('id', recordItem.value.id);
-
-  if (error) throw error;
-}
-
-async function getMenu() {
+async function getMenuData() {
   loadingMenu.value = true;
-
-  const { data, error } = await supabase.from('Categoria').select(`id, nombre,
-           Item (id, id_categoria, nombre, descripcion, precio, foto)`);
-           
+  menu.value = await getMenu();
   loadingMenu.value = false;
-
-  if (error) throw error;
-
-  menu.value = data;
 }
 </script>

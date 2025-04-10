@@ -1,27 +1,31 @@
-import { ref } from 'vue'
+import { ref } from 'vue';
 
 export function useErrorHandler(error) {
-
   if (error == undefined) {
     return '';
   }
 
-  const message = ref('')
+  const message = ref('');
 
   switch (error.code) {
-    case "invalid_credentials":
+    case 'invalid_credentials':
       message.value = 'Las credenciales son incorrectas';
       break;
 
-    case "user_already_exists":
+    case 'user_already_exists':
       message.value = 'El usuario ya se encuentra registrado';
       break;
 
-    case "23503": // Error de foreing key
-      message.value = 'No es posible eliminar la Categoría ya que está siendo utilizada por un Item';
+    case '23502': // null value in column "user_id" of relation "..." violates not-null constraint
+      message.value = 'Debe iniciar sesión';
       break;
 
-      case "42501": // new row violates row-level security policy for table ...'
+    case '23503': // Error de foreing key
+      message.value =
+        'No es posible eliminar la Categoría ya que está siendo utilizada por un Item';
+      break;
+
+    case '42501': // new row violates row-level security policy for table ...'
       message.value = 'Debe iniciar sesión';
       break;
 
@@ -30,5 +34,5 @@ export function useErrorHandler(error) {
       break;
   }
 
-  return message.value
+  return message.value;
 }

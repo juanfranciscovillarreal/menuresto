@@ -46,13 +46,22 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 import { supabase } from '../lib/supabase'
-import ToolBar from '@/components/ToolBar.vue';
-import { useErrorHandler } from '@/composables/errorHandler'
-import Dialog from '@/components/Dialog.vue';
-import { useUsuarioStore } from "../stores/usuario";
-import { useEmpresaStore } from "../stores/empresa";
+
+// Assets
 import imgUrl from '../assets/InteliCarta.png'
+// Components
+import ToolBar from '@/components/ToolBar.vue';
+import Dialog from '@/components/Dialog.vue';
+// Composables
+import { useErrorHandler } from '@/composables/errorHandler'
 import { useEmpresa } from '../composables/empresa';
+import { useEmpresaStore } from "../stores/empresa";
+import { useCategoria } from '../composables/categorias';
+// Stores
+import { useCategoriasStore } from "../stores/categorias";
+import { useUsuarioStore } from "../stores/usuario";
+
+const categoriasStore = useCategoriasStore()
 
 const { getEmpresa} = useEmpresa();
 const usuarioStore = useUsuarioStore()
@@ -65,6 +74,7 @@ const visible = ref(false);
 const dialogShow = ref(false);
 const dialogTitulo = ref('Inicio de sesión');
 const dialogMensaje = ref('');
+const { getCategorias } = useCategoria();
 
 const rules = ref({
     required: (value) => !!value || 'Required.',
@@ -86,6 +96,7 @@ async function onSubmit() {
     try {
         await signInWithEmail();
         await getEmpresaData();
+        await getCategoriasData();
     } catch (error) {
         dialogShow.value = true;
         dialogMensaje.value = useErrorHandler(error);
@@ -115,6 +126,10 @@ async function getEmpresaData() {
         dialogShow.value = true;
         dialogMensaje.value = useErrorHandler(error);
     }
+}
+
+async function getCategoriasData(){
+    categoriasStore.categorias = await getCategorias();
 }
 
 async function signOut() {

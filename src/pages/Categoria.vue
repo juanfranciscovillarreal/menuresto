@@ -1,33 +1,32 @@
 <template>
+  <v-card elevation="0" rounded="0">
+    <ToolBar titulo="Categorías" ruta="/Administracion" :nuevo="true" @verDialogo="add()"></ToolBar>
 
-    <v-card elevation="0" rounded="0">
-      <ToolBar titulo="Categorías" ruta="/Administracion" :nuevo="true" @verDialogo="add()"></ToolBar>
+    <v-row no-gutters>
+      <v-col cols="12">
+        <!-- Buscar -->
+        <v-text-field v-model="filter" @keyup="filtrar" prepend-inner-icon="mdi-magnify" label="Buscar" single-line
+          hide-details clearable @click:clear="listar">
+        </v-text-field>
+      </v-col>
+    </v-row>
 
-      <v-row no-gutters>
-        <v-col cols="12">
-          <!-- Buscar -->
-          <v-text-field v-model="filter" @keyup="filtrar" prepend-inner-icon="mdi-magnify" label="Buscar" single-line
-            hide-details clearable @click:clear="listar">
-          </v-text-field>
-        </v-col>
-      </v-row>
+    <v-row no-gutters>
+      <v-col cols="12" lg="6" md="6" sm="12">
+        <v-list lines="two">
+          <v-list-item v-for="categoria in listaCategorias" :key="categoria.id" :title="categoria.nombre">
+            <template v-slot:append>
+              <div class="d-flex ga-2 justify-end">
+                <v-icon color="medium-emphasis" icon="mdi-pencil" size="small" @click="edit(categoria)"></v-icon>
 
-      <v-row no-gutters>
-        <v-col cols="12" lg="6" md="6" sm="12">
-          <v-list lines="two">
-            <v-list-item v-for="item in listaItems" :key="item.id" :title="item.nombre">
-              <template v-slot:append>
-                <div class="d-flex ga-2 justify-end">
-                  <v-icon color="medium-emphasis" icon="mdi-pencil" size="small" @click="edit(item)"></v-icon>
-
-                  <v-icon color="medium-emphasis" icon="mdi-delete" size="small" @click="remove(item)"></v-icon>
-                </div>
-              </template>
-            </v-list-item>
-          </v-list>
-        </v-col>
-      </v-row>
-    </v-card>
+                <v-icon color="medium-emphasis" icon="mdi-delete" size="small" @click="remove(categoria)"></v-icon>
+              </div>
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-col>
+    </v-row>
+  </v-card>
 
 
   <!-- Diálogo  -->
@@ -72,15 +71,20 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { useCategoria } from '../composables/categorias';
+
+// Components
 import Dialog from '../components/Dialog.vue';
 import ToolBar from '../components/ToolBar.vue';
 import Confirm from '../components/Confirm.vue';
+// Composables
+import { useCategoria } from '../composables/categorias';
 import { useErrorHandler } from '../composables/errorHandler';
+// Stores
+import { useCategoriasStore } from "../stores/categorias";
 
+const categoriasStore = useCategoriasStore()
 const form = ref(false);
 const nombre = ref('');
-const items = ref([]);
 const rules = ref({
   required: (value) => !!value || 'Obligatorio',
   min8: (v) => v.length >= 8 || 'Min 8 caracteres',
@@ -91,7 +95,7 @@ const rules = ref({
 });
 
 const filter = ref('');
-const listaItems = ref([]);
+const listaCategorias = ref([]);
 const record = ref({
   id: '',
   nombre: '',
@@ -113,39 +117,40 @@ const { getCategorias, updateCategoria, insertCategoria, removeCategoria } =
   useCategoria();
 
 onMounted(async () => {
-  items.value = await getCategorias();
+  listaCategorias.value = categoriasStore.categorias;
 });
 
-watch(
-  items,
-  async (newItems, oldItems) => {
-    listaItems.value = newItems;
+watch(()=>
+  categoriasStore.categorias,
+  async (newData, oldData) => {
+    listaCategorias.value = newData;
   },
   { deep: true }
 );
+
 
 function getDialogTitle(nombre) {
   return isEditing.value ? `Editar ${nombre}` : `Agregar ${nombre}`;
 }
 
 function listar() {
-  listaItems.value = items.value;
+  listaCategorias.value = categoriasStore.categorias;
 }
 
 function filtrar() {
   let filtro = filter.value.toLowerCase();
-  listaItems.value = items.value;
+  listaCategorias.value = categoriasStore.categorias;
 
-  let itemsFiltrados = listaItems.value.filter((item) =>
-    item.nombre.toLowerCase().includes(filtro)
+  let categoriasFiltradas = listaCategorias.value.filter((categoria) =>
+    categoria.nombre.toLowerCase().includes(filtro)
   );
 
-  if (filtro != '') listaItems.value = itemsFiltrados;
+  if (filtro != '') listaCategorias.value = categoriasFiltradas;
 }
 
-async function remove(item) {
-  record.value = { ...item };
-  confirmarMensaje.value = `¿Elimina la Categoría ${item.nombre}?`;
+async function remove(categoria) {
+  record.value = { ...categoria };
+  confirmarMensaje.value = `¿Elimina la Categoría ${categoria.nombre}?`;
   confirmarTitulo.value = 'Eliminar';
   confirmarShow.value = true;
 }
@@ -154,7 +159,7 @@ async function confirmarAceptar() {
   try {
     confirmarShow.value = false;
     await removeCategoria(record.value.id);
-    items.value = await get();
+    categoriasStore.categorias = await getCategorias();
   } catch (error) {
     dialogShow.value = true;
     dialogMensaje.value = useErrorHandler(error);
@@ -167,9 +172,9 @@ function add() {
   dialog.value = true;
 }
 
-function edit(item) {
+function edit(categoria) {
   isEditing.value = true;
-  record.value = { ...item };
+  record.value = { ...categoria };
   dialog.value = true;
 }
 
@@ -189,12 +194,13 @@ async function save() {
     if (isEditing.value) {
       await updateCategoria(record);
     } else {
-      let newItem = {
+      let newCategoria = {
         nombre: record.value.nombre,
       };
-      await insertCategoria(newItem);
+      await insertCategoria(newCategoria);
     }
-    items.value = await getCategorias();
+    categoriasStore.categorias = await getCategorias();
+
     dialog.value = false;
   } catch (error) {
     dialog.value = false;

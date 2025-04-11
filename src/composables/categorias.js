@@ -38,7 +38,7 @@ export function useCategoria() {
   }
 
   async function getCategorias() {
-    let { data, error, status } = await supabase.from('Categoria').select();
+    let { data, error, status } = await supabase.from('Categoria').select().order('nombre', { ascending: true });
     if (error) throw error;
     return data;
   }

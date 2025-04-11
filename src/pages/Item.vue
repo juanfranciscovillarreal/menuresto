@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card elevation="0" rounded="0">
     <ToolBar titulo="Items" ruta="/Administracion" :nuevo="true" @verDialogo="addItem()"></ToolBar>
 
     <v-row no-gutters>

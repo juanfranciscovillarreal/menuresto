@@ -40,7 +40,7 @@
 
     <!-- Detalle -->
     <v-bottom-sheet v-model="dialog">
-        <v-card>
+        <v-card elevation="0" rounded="0">
             <v-toolbar>
                 <v-toolbar-title>{{ dialogTitulo }}</v-toolbar-title>
                 <v-spacer></v-spacer>

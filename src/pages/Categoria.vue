@@ -1,6 +1,6 @@
 <template>
 
-    <v-card>
+    <v-card elevation="0" rounded="0">
       <ToolBar titulo="Categorías" ruta="/Administracion" :nuevo="true" @verDialogo="add()"></ToolBar>
 
       <v-row no-gutters>

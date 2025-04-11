@@ -20,7 +20,7 @@
 
   <v-navigation-drawer v-model="drawer" temporary>
     <!-- Logo -->
-    <v-card rounded="0" class="pa-2">
+    <v-card elevation="0" rounded="0" class="pa-2">
       <v-img aspect-ratio="16/9" :src="getImage()" cover>
       </v-img>
     </v-card>

@@ -38,7 +38,7 @@ export function useItem() {
   }
 
   async function getItems() {
-    let { data, error, status } = await supabase.from('Item').select();
+    let { data, error, status } = await supabase.from('Item').select().order('nombre', { ascending: true });
     if (error) throw error;
     return data;
   }

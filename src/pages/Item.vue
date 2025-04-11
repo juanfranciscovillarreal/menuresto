@@ -61,23 +61,25 @@
 
               <!-- descripcion -->
               <v-col cols="12" md="4">
-                <v-text-field v-model="recordItem.descripcion" :rules="[rules.required, rules.max50]"
-                  label="Descripción" variant="underlined" clearable prepend-icon="mdi-text">
+                <v-text-field v-model="recordItem.descripcion" :rules="[rules.max50]" label="Descripción"
+                  variant="underlined" clearable prepend-icon="mdi-text">
                 </v-text-field>
               </v-col>
 
               <!-- precio -->
               <v-col cols="12" md="4">
-                <v-text-field v-model="recordItem.precio" :rules="[rules.required]" label="Precio" variant="underlined"
-                  clearable prepend-icon="mdi-currency-usd">
+                <v-text-field v-model="recordItem.precio" :rules="[rules.decimal]" label="Precio"
+                  variant="underlined" clearable prepend-icon="mdi-currency-usd">
                 </v-text-field>
               </v-col>
             </v-row>
 
             <v-row no-gutters>
               <v-col cols="12" md="4">
-                <v-select :items="categorias" item-title="nombre" item-value="id" v-model="recordItem.id_categoria"
-                  density="comfortable" label="Categoria"></v-select>
+                <v-select :items="categoriasStore.categorias" item-title="nombre" item-value="id"
+                  v-model="recordItem.id_categoria" density="comfortable" label="Categoria" variant="underlined"
+                  prepend-icon="mdi-format-list-text" :rules="[rules.required]">
+                </v-select>
               </v-col>
             </v-row>
           </v-card-text>
@@ -104,32 +106,39 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-// import { supabase } from '../lib/supabase'
-//import { supabase } from '../supabaseClient';
-import { useCategoria } from '../composables/categorias';
-import { useItem } from '../composables/items';
-import imgUrl from '../assets/image.png';
+// Components
 import Avatar from '../components/Avatar.vue';
 import Dialog from '../components/Dialog.vue';
 import ToolBar from '../components/ToolBar.vue';
 import Confirm from '../components/Confirm.vue';
+// Composables
 import { useErrorHandler } from '../composables/errorHandler';
+import { useCategoria } from '../composables/categorias';
+import { useItem } from '../composables/items';
+// Stores
+import { useCategoriasStore } from "../stores/categorias";
+import { useItemsStore } from "../stores/items";
+// Assets
+import imgUrl from '../assets/image.png';
 
+// Constants
 const form = ref(false);
 const formItem = ref(false);
 const nombre = ref('');
 const descripcion = ref('');
-const categorias = ref([]);
 const categoria = ref();
 const precio = ref();
-const items = ref([]);
 const rules = ref({
   required: (value) => !!value || 'Obligatorio',
   min8: (v) => v.length >= 8 || 'Min 8 caracteres',
-  mayor0: (v) => v.length > 0 || 'Sólo números positivos',
+  mayor0: (v) => (v.length > 0) || 'Sólo números positivos',
   max20: (value) => value.length <= 20 || 'Max 20 caracteres',
   max50: (value) =>
     value == undefined || value.length <= 50 || 'Max 50 caracteres',
+  decimal: (value) => {
+    const pattern = /^((?!0)\d{1,5}|0|\.\d{1,2})($|\.$|\.\d{1,2}$)/;
+    return pattern.test(value) || 'Importe inválido.';
+  },
 });
 const imageUrl = ref('');
 const image = ref('');
@@ -141,17 +150,17 @@ const recordItem = ref({
   id: '',
   nombre: '',
   descripcion: '',
-  id_categoria: 0,
+  id_categoria: '0',
   foto: '',
-  precio: '',
+  precio: '0',
 });
 const DEFAULT_RECORD_ITEM = ref({
   id: '',
   nombre: '',
   descripcion: '',
-  id_categoria: 0,
+  id_categoria: '',
   foto: imgUrl,
-  precio: '',
+  precio: '0',
 });
 const dialogItem = ref(false);
 const isEditing = ref(false);
@@ -163,23 +172,27 @@ const confirmarShow = ref(false);
 const confirmarTitulo = ref('');
 const confirmarMensaje = ref('');
 
+// Composables
 const { getCategorias } = useCategoria();
 const { getItems, updateItem, insertItem, removeItem } = useItem();
 
+// Stores
+const categoriasStore = useCategoriasStore()
+const itemsStore = useItemsStore()
+
 onMounted(async () => {
   try {
-    categorias.value = await getCategorias();
-    items.value = await getItems();
+    listaItems.value = itemsStore.items;
   } catch (error) {
     dialogShow.value = true;
     dialogMensaje.value = useErrorHandler(error);
   }
 });
 
-watch(
-  items,
-  async (newItems, oldItems) => {
-    listaItems.value = newItems;
+watch(() =>
+  itemsStore.items,
+  async (newData, oldData) => {
+    listaItems.value = newData;
   },
   { deep: true }
 );
@@ -189,16 +202,16 @@ function getDialogTitle(nombre) {
 }
 
 function updateAvatar(avatar) {
-  recordItem.value.imageUrl = avatar;
+  recordItem.value.foto = avatar;
 }
 
 function listarItems() {
-  listaItems.value = items.value;
+  listaItems.value = itemsStore.items;
 }
 
 function fitrarItems() {
   let filtro = filter.value.toLowerCase();
-  listaItems.value = items.value;
+  listaItems.value = itemsStore.items;
 
   let itemsFiltrados = listaItems.value.filter((item) =>
     item.nombre.toLowerCase().includes(filtro)
@@ -217,7 +230,7 @@ async function remove(item) {
 async function confirmarAceptar() {
   confirmarShow.value = false;
   await removeItem(recordItem.value.id);
-  items.value = await getItems();
+  itemsStore.items = await getItems();
 }
 
 function addItem() {
@@ -260,7 +273,7 @@ async function saveItem() {
       };
       await insertItem(newitem);
     }
-    items.value = await getItems();
+    itemsStore.items = await getItems();
     dialogItem.value = false;
   } catch (error) {
     dialogItem.value = false;

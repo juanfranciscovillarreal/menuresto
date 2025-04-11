@@ -57,15 +57,13 @@ import { useErrorHandler } from '@/composables/errorHandler'
 import { useEmpresa } from '../composables/empresa';
 import { useEmpresaStore } from "../stores/empresa";
 import { useCategoria } from '../composables/categorias';
+import { useItem } from '../composables/items';
 // Stores
 import { useCategoriasStore } from "../stores/categorias";
+import { useItemsStore } from "../stores/items";
 import { useUsuarioStore } from "../stores/usuario";
 
-const categoriasStore = useCategoriasStore()
-
-const { getEmpresa} = useEmpresa();
-const usuarioStore = useUsuarioStore()
-const empresaStore = useEmpresaStore()
+// Constants
 const router = useRouter();
 const form = ref(false);
 const email = ref('juanfranciscovillarreal@hotmail.com');
@@ -74,7 +72,15 @@ const visible = ref(false);
 const dialogShow = ref(false);
 const dialogTitulo = ref('Inicio de sesión');
 const dialogMensaje = ref('');
+// Composables
+const { getEmpresa} = useEmpresa();
 const { getCategorias } = useCategoria();
+const { getItems } = useItem();
+// Stores
+const categoriasStore = useCategoriasStore()
+const itemsStore = useItemsStore()
+const usuarioStore = useUsuarioStore()
+const empresaStore = useEmpresaStore()
 
 const rules = ref({
     required: (value) => !!value || 'Required.',
@@ -97,6 +103,7 @@ async function onSubmit() {
         await signInWithEmail();
         await getEmpresaData();
         await getCategoriasData();
+        await getItemsData();
     } catch (error) {
         dialogShow.value = true;
         dialogMensaje.value = useErrorHandler(error);
@@ -130,6 +137,10 @@ async function getEmpresaData() {
 
 async function getCategoriasData(){
     categoriasStore.categorias = await getCategorias();
+}
+
+async function getItemsData(){
+    itemsStore.items = await getItems();
 }
 
 async function signOut() {

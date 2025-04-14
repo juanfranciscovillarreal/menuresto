@@ -162,7 +162,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 // Components
 import Dialog from '../components/Dialog.vue';
 import ToolBar from '../components/ToolBar.vue';

@@ -11,9 +11,7 @@
     <v-spacer></v-spacer>
 
     <!-- Menú Cuenta Usuario -->
-    <Usuario 
-      :nombre="empresaStore.empresa.nombre" 
-      :email="usuarioStore.email">
+    <Usuario :nombre="empresaStore.empresa.nombre" :email="usuarioStore.email">
     </Usuario>
 
   </v-app-bar>
@@ -79,10 +77,10 @@ import { useRouter, useRoute } from 'vue-router'
 import { useMenuStore } from "../stores/menu";
 import { useUsuarioStore } from "../stores/usuario";
 import { useEmpresaStore } from "../stores/empresa";
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { supabase } from '../lib/supabase'
 import { useErrorHandler } from '@/composables/errorHandler'
-import  Usuario  from "../components/Usuario.vue";
+import Usuario from "../components/Usuario.vue";
 import imgUrl from '../assets/InteliCarta.png'
 import FloatingButtons from '@/components/FloatingButtons.vue';
 
@@ -112,12 +110,12 @@ watch(drawer, (newValue, oldValue) => {
   drawer.value = newValue
 })
 
-function getImage(){
-  if(empresaStore.empresa.logo == ''){
+function getImage() {
+  if (empresaStore.empresa.logo == '') {
     empresaStore.empresa.logo = imgUrl;
   }
 
-  return empresaStore.empresa.logo; 
+  return empresaStore.empresa.logo;
 }
 async function signOut() {
   try {

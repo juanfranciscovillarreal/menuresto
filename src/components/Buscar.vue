@@ -24,7 +24,7 @@
 import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useMenuStore } from "../stores/menu";
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -36,7 +36,7 @@ onMounted(() => {
 
 })
 
-function cerrar(){
+function cerrar() {
     buscar.value = false;
     texto.value = '';
 }

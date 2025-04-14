@@ -18,7 +18,7 @@
 
     <!-- Título App -->
     <!-- <v-toolbar-title>{{ getTitulo }}</v-toolbar-title> -->
-    <v-toolbar-title>Intelicarta</v-toolbar-title> 
+    <v-toolbar-title>Intelicarta</v-toolbar-title>
 
     <!-- Espacio -->
     <v-spacer v-if="route.path == `/${empresa}/Menu`"></v-spacer>
@@ -137,7 +137,7 @@ import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useMenuStore } from "../stores/menu";
 import { useEmpresaStore } from "../stores/empresa";
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import VueQrcode from 'vue-qrcode';
 import Buscar from '../components/Buscar.vue';
 import { supabase } from '../lib/supabase'

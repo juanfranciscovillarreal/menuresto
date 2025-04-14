@@ -58,10 +58,12 @@ import { useEmpresa } from '../composables/empresa';
 import { useEmpresaStore } from "../stores/empresa";
 import { useCategoria } from '../composables/categorias';
 import { useItem } from '../composables/items';
+import { useMenu } from '../composables/menu';
 // Stores
 import { useCategoriasStore } from "../stores/categorias";
 import { useItemsStore } from "../stores/items";
 import { useUsuarioStore } from "../stores/usuario";
+import { useMenuStore } from "../stores/menu";
 
 // Constants
 const router = useRouter();
@@ -76,11 +78,13 @@ const dialogMensaje = ref('');
 const { getEmpresa} = useEmpresa();
 const { getCategorias } = useCategoria();
 const { getItems } = useItem();
+const { getMenu } = useMenu();
 // Stores
 const categoriasStore = useCategoriasStore()
 const itemsStore = useItemsStore()
 const usuarioStore = useUsuarioStore()
 const empresaStore = useEmpresaStore()
+const menuStore = useMenuStore()
 
 const rules = ref({
     required: (value) => !!value || 'Required.',
@@ -104,6 +108,7 @@ async function onSubmit() {
         await getEmpresaData();
         await getCategoriasData();
         await getItemsData();
+        await getMenuData();
     } catch (error) {
         dialogShow.value = true;
         dialogMensaje.value = useErrorHandler(error);
@@ -141,6 +146,10 @@ async function getCategoriasData(){
 
 async function getItemsData(){
     itemsStore.items = await getItems();
+}
+
+async function getMenuData(){
+    menuStore.menu = await getMenu();
 }
 
 async function signOut() {

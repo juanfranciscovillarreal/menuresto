@@ -9,6 +9,7 @@ export const useMenuStore = defineStore('menu', () => {
   const menuCompleto = ref([])
   const pedido = ref([])
   const expandir = ref([])
+  const menu = ref([])
 
   // Getters
   const duplicar = computed(() => count.value * 2)
@@ -47,6 +48,7 @@ export const useMenuStore = defineStore('menu', () => {
     total,
     menuFiltrado,
     menuCompleto,
+    menu,
     expandir,
     pedido,
     totalizar,

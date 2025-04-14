@@ -27,7 +27,7 @@
                 @click="editCategoria(internalItem.value)"></v-icon>
 
               <v-icon color="medium-emphasis" icon="mdi-delete" size="small"
-                @click="deleteCategoria(internalItem.value)"></v-icon>
+                @click="deleteCategoria(internalItem)"></v-icon>
 
               <v-icon color="medium-emphasis" icon="mdi-plus" size="small"
                 @click="addItem(internalItem.value)"></v-icon>
@@ -154,27 +154,34 @@
 
   <Dialog :show="dialogShow" :titulo="dialogTitulo" :mensaje="dialogMensaje" @dialogCerrar="dialogShow = false">
   </Dialog>
+
+  <Confirm :show="confirmarShow" :titulo="confirmarTitulo" :mensaje="confirmarMensaje"
+    @confirmarCerrar="confirmarShow = false" @confirmarAceptar="confirmarAceptar">
+  </Confirm>
+
 </template>
 
 <script setup>
-import { onMounted, ref, shallowRef } from 'vue';
-import { useDate } from 'vuetify';
-import { supabase } from '../lib/supabase'
-import { useEmpresaStore } from "../stores/empresa";
+import { onMounted, ref } from 'vue';
+// Components
+import Dialog from '../components/Dialog.vue';
+import ToolBar from '../components/ToolBar.vue';
+import Confirm from '../components/Confirm.vue';
+// Composables
 import { useErrorHandler } from '../composables/errorHandler';
 import { useCategoria } from '../composables/categorias';
 import { useItem } from '../composables/items';
 import { useMenu } from '../composables/menu';
-import Dialog from '../components/Dialog.vue';
-import ToolBar from '../components/ToolBar.vue';
+// Stores
+import { useCategoriasStore } from "../stores/categorias";
+import { useItemsStore } from "../stores/items";
+import { useEmpresaStore } from "../stores/empresa";
+import { useMenuStore } from "../stores/menu";
+// Assets
 import imgUrl from '../assets/image.png'
 
-const { getCategorias, updateCategoria, insertCategoria, removeCategoria } = useCategoria();
-const { getItems, updateItem, insertItem, removeItem } = useItem();
-const { getMenu } = useMenu();
-const empresaStore = useEmpresaStore()
-const categorias = ref([]);
-const items = ref([]);
+// Constants
+const listaCategorias = ref([]);
 const menu = ref([]);
 const loadingMenu = ref(false)
 
@@ -204,7 +211,6 @@ const DEFAULT_RECORD_ITEM = ref({
   foto: imgUrl,
   precio: '',
 });
-const books = ref([]);
 const recordCategoria = ref({
   id: '',
   nombre: '',
@@ -235,10 +241,25 @@ const categoriasHeaders = ref([
 const filter = ref('');
 const listaMenu = ref([]);
 
+const confirmarShow = ref(false);
+const confirmarTitulo = ref('');
+const confirmarMensaje = ref('');
+
+// Composables
+const { getCategorias, updateCategoria, insertCategoria, removeCategoria } = useCategoria();
+const { getItems, updateItem, insertItem, removeItem } = useItem();
+const { getMenu } = useMenu();
+
+// Stores
+const categoriasStore = useCategoriasStore()
+const itemsStore = useItemsStore()
+const empresaStore = useEmpresaStore()
+const menuStore = useMenuStore()
+
 onMounted(async () => {
   try {
-    categorias.value = await getCategorias();
-    await getMenuData();
+    listaCategorias.value = categoriasStore.categorias;
+    listaMenu.value = menuStore.menu;
   } catch (error) {
     dialogShow.value = true;
     dialogTitulo.value = "Error";
@@ -246,13 +267,22 @@ onMounted(async () => {
   }
 });
 
-watch(
-  menu,
-  async (newMenu, oldMenu) => {
-    listaMenu.value = newMenu;
+watch(() =>
+  menuStore.menu,
+  async (newData, oldData) => {
+    listaMenu.value = newData;
   },
   { deep: true }
 );
+
+watch(() =>
+  categoriasStore.categorias,
+  async (newData, oldData) => {
+    listaCategorias.value = newData;
+  },
+  { deep: true }
+);
+
 
 function listar() {
   listaMenu.value = menu.value;
@@ -316,7 +346,7 @@ function addItem(id_categoria) {
 
 function editCategoria(id) {
   isEditing.value = true;
-  const found = categorias.value.find((categoria) => categoria.id === id);
+  const found = listaCategorias.value.find((categoria) => categoria.id === id);
   recordCategoria.value = { ...found };
   dialogCategoria.value = true;
 }
@@ -330,10 +360,18 @@ function editItem(item) {
   dialogItem.value = true;
 }
 
-async function deleteCategoria(id) {
+async function deleteCategoria(categoria) {
+  recordCategoria.value = { ...categoria.raw };
+  confirmarMensaje.value = `¿Elimina la Categoría ${categoria.columns.nombre}?`;
+  confirmarTitulo.value = 'Eliminar';
+  confirmarShow.value = true;
+}
+
+async function confirmarAceptar() {
   try {
-    await removeCategoria(id);
-    categorias.value = await getCategorias();
+    confirmarShow.value = false;
+    await removeCategoria(recordCategoria.value.id);
+    categoriasStore.categorias = await getCategorias();
     await getMenuData();
   } catch (error) {
     dialogShow.value = true;
@@ -342,10 +380,24 @@ async function deleteCategoria(id) {
   }
 }
 
+/*
+async function deleteCategoria(id) {
+  try {
+    await removeCategoria(id);
+    categoriasStore.categorias = await getCategorias();
+    await getMenuData();
+  } catch (error) {
+    dialogShow.value = true;
+    dialogTitulo.value = "Categoría";
+    dialogMensaje.value = useErrorHandler(error);
+  }
+}
+  */
+
 async function deleteItem(id) {
   try {
     await removeItem(id);
-    categorias.value = await getCategorias();
+    categoriasStore.categorias = await getCategorias();
     await getMenuData();
   } catch (error) {
     dialogShow.value = true;
@@ -364,7 +416,7 @@ async function saveCategoria() {
       };
       await insertCategoria(newItem);
     }
-    categorias.value = await getCategorias();
+    categoriasStore.categorias = await getCategorias();
     await getMenuData();
     dialogCategoria.value = false;
   } catch (error) {
@@ -397,7 +449,7 @@ async function saveItem() {
 
 async function getMenuData() {
   loadingMenu.value = true;
-  menu.value = await getMenu();
+  menuStore.menu = await getMenu();
   loadingMenu.value = false;
 }
 </script>

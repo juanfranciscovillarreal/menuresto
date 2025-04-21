@@ -1,6 +1,6 @@
 <template>
-  <!-- <ToolBar titulo="Perfil" ruta="/Administracion" icono="mdi-content-save" @evento_click="onSubmit"></ToolBar> -->
-  <ToolBar titulo="Perfil" ruta="/Administracion"></ToolBar>
+  <!-- <ToolBar titulo="Empresa" ruta="/Administracion" icono="mdi-content-save" @evento_click="onSubmit"></ToolBar> -->
+  <ToolBar titulo="Empresa" ruta="/Administracion"></ToolBar>
 
   <Avatar :avatar="getImage" @onUpdateAvatar="updateAvatar"></Avatar>
 
@@ -104,10 +104,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 import { supabase } from '../lib/supabase'
 // Components
+import ToolBar from '@/components/ToolBar.vue';
 import Dialog from '@/components/Dialog.vue';
 import Avatar from '@/components/Avatar.vue';
 // Composables
@@ -124,7 +125,7 @@ const route = useRoute()
 const empresaStore = useEmpresaStore()
 const form = ref(false);
 const dialogShow = ref(false);
-const dialogTitulo = ref('Perfil');
+const dialogTitulo = ref('Empresa');
 const dialogMensaje = ref('');
 
 // Composables

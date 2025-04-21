@@ -6,7 +6,7 @@
                 <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
                 <!-- Título -->
-                <v-app-bar-title>InteliCarta</v-app-bar-title>
+                <v-app-bar-title></v-app-bar-title>
                 <!-- Espacio -->
                 <v-spacer></v-spacer>
 
@@ -1061,7 +1061,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useErrorHandler } from '@/composables/errorHandler'
 

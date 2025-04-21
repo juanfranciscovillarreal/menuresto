@@ -112,11 +112,13 @@ async function onSubmit() {
 
 async function signInWithEmail() {
     try {
-        signIn(email.value, password.value);
+        await signIn(email.value, password.value)
+            .then((data) => {
+                empresaStore.empresa.id = data.user.id;
+                usuarioStore.email = email.value;
+                router.push('/Administracion');
+            });
 
-        empresaStore.empresa.id = data.user.id;
-        usuarioStore.email = email.value;
-        router.push('/Administracion');
     } catch (error) {
         dialogShow.value = true;
         dialogMensaje.value = useErrorHandler(error);

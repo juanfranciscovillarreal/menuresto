@@ -16,6 +16,10 @@ export function useErrorHandler(error) {
       message.value = 'El usuario ya se encuentra registrado';
       break;
 
+    case '42P01': // "relation \"public.profiles\" does not exist"
+      message.value = 'La tabla no existe';
+      break;
+
     case '23502': // null value in column "user_id" of relation "..." violates not-null constraint
       message.value = 'Debe iniciar sesión';
       break;
@@ -25,7 +29,7 @@ export function useErrorHandler(error) {
         'No es posible eliminar la Categoría ya que está siendo utilizada por un Item';
       break;
 
-      case '23514': // new row for relation "Empresa" violates check constraint "username_length"
+    case '23514': // new row for relation "Empresa" violates check constraint "username_length"
       message.value =
         'Error al actualizar los datos';
       break;

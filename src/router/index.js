@@ -191,12 +191,13 @@ router.onError((error) => {
 
 router.beforeEach(async (to, _, next) => {
   const authStore = useAuthStore();
-  let session = null;
 
-  session = await getSession();
-  authStore.setSession(session);
+  await getSession().then((session) => {
+    authStore.setSession(session.value);
+  });
 
-  if (to.meta.requiresAuth && !session) {
+
+  if (to.meta.requiresAuth && !authStore.session) {
     next("/LogIn");
   } else {
     next();

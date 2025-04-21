@@ -18,7 +18,7 @@
 
     <!-- Título App -->
     <!-- <v-toolbar-title>{{ getTitulo }}</v-toolbar-title> -->
-    <v-toolbar-title>Intelicarta</v-toolbar-title> 
+    <v-toolbar-title></v-toolbar-title>
 
     <!-- Espacio -->
     <v-spacer v-if="route.path == `/${empresa}/Menu`"></v-spacer>
@@ -208,7 +208,6 @@ watch(drawer, (newValue, oldValue) => {
 })
 
 const getImage = computed(() => {
-  debugger
   return empresaStore.empresa.logo != '' ? empresaStore.empresa.logo : '@/assets/Empresa.png';
 })
 

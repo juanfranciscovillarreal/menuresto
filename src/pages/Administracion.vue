@@ -5,7 +5,7 @@
     </v-app-bar-nav-icon>
 
     <!-- Título App -->
-    <v-toolbar-title>Intelicarta</v-toolbar-title>
+    <v-toolbar-title></v-toolbar-title>
 
     <!-- Espacio -->
     <v-spacer></v-spacer>

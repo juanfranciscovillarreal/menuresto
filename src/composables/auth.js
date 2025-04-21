@@ -6,14 +6,14 @@ export function useAuth() {
 
   async function signIn(email, password) {
 
-    const { user, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
 
     if (error) throw error
 
-    return user;
+    return data;
   }
 
   async function signOut() {
@@ -24,10 +24,8 @@ export function useAuth() {
   }
 
   async function getSession() {
-
-    await supabase.auth.getSession().then(({ data }) => {
-      session.value = data.session;
-    });
+    const { data, error } = await supabase.auth.getSession()
+    session.value = data.session;
 
     if (error) throw error;
 

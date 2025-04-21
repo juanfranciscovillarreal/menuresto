@@ -5,7 +5,7 @@ export function useEmpresa() {
 
   async function getEmpresa(id) {
     const { data, error, status } = await supabase
-      .from('Empresa')
+      .from('profiles')
       .select()
       .eq('id', id)
       .single();
@@ -16,7 +16,7 @@ export function useEmpresa() {
 
   async function updateEmpresa(empresa) {
     const { error } = await supabase
-      .from('Empresa')
+      .from('profiles')
       .update(empresa)
       .eq('id', empresa.id);
 

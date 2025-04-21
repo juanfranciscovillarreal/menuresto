@@ -45,7 +45,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
-import { supabase } from '../lib/supabase'
 
 // Assets
 import imgUrl from '../assets/InteliCarta.png'
@@ -59,11 +58,14 @@ import { useEmpresaStore } from "../stores/empresa";
 import { useCategoria } from '../composables/categorias';
 import { useItem } from '../composables/items';
 import { useMenu } from '../composables/menu';
+import { useReglas } from "../composables/reglas";
+import { useAuth } from '../composables/auth';
 // Stores
 import { useCategoriasStore } from "../stores/categorias";
 import { useItemsStore } from "../stores/items";
 import { useUsuarioStore } from "../stores/usuario";
 import { useMenuStore } from "../stores/menu";
+import { useAuthStore } from "../stores/auth";
 
 // Constants
 const router = useRouter();
@@ -75,29 +77,22 @@ const dialogShow = ref(false);
 const dialogTitulo = ref('Inicio de sesión');
 const dialogMensaje = ref('');
 // Composables
-const { getEmpresa} = useEmpresa();
+const { getEmpresa } = useEmpresa();
 const { getCategorias } = useCategoria();
 const { getItems } = useItem();
 const { getMenu } = useMenu();
+const { rules } = useReglas();
+const { signIn, signOut } = useAuth();
 // Stores
 const categoriasStore = useCategoriasStore()
 const itemsStore = useItemsStore()
 const usuarioStore = useUsuarioStore()
 const empresaStore = useEmpresaStore()
 const menuStore = useMenuStore()
-
-const rules = ref({
-    required: (value) => !!value || 'Required.',
-    counter: (value) => value.length <= 20 || 'Máximo 20 caracteres',
-    email: (value) => {
-        const pattern =
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return pattern.test(value) || 'Correo inválido.';
-    },
-});
+const authStore = useAuthStore();
 
 onMounted(() => {
-    signOut();
+    signOutSession();
 });
 
 async function onSubmit() {
@@ -116,16 +111,16 @@ async function onSubmit() {
 }
 
 async function signInWithEmail() {
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.value,
-        password: password.value,
-    });
+    try {
+        signIn(email.value, password.value);
 
-    if (error) throw error
-
-    empresaStore.empresa.id = data.user.id;
-    usuarioStore.email = email.value;
-    router.push('/Administracion');
+        empresaStore.empresa.id = data.user.id;
+        usuarioStore.email = email.value;
+        router.push('/Administracion');
+    } catch (error) {
+        dialogShow.value = true;
+        dialogMensaje.value = useErrorHandler(error);
+    }
 }
 
 async function getEmpresaData() {
@@ -140,21 +135,25 @@ async function getEmpresaData() {
     }
 }
 
-async function getCategoriasData(){
+async function getCategoriasData() {
     categoriasStore.categorias = await getCategorias();
 }
 
-async function getItemsData(){
+async function getItemsData() {
     itemsStore.items = await getItems();
 }
 
-async function getMenuData(){
+async function getMenuData() {
     menuStore.menu = await getMenu();
 }
 
-async function signOut() {
-    const { error } = await supabase.auth.signOut();
-
-    if (error) console.log(`Error: ${JSON.stringify(error)}`);
+async function signOutSession() {
+    try {
+        signOut();
+        authStore.setSession(null);
+    } catch (error) {
+        dialogShow.value = true;
+        dialogMensaje.value = useErrorHandler(error);
+    }
 }
 </script>

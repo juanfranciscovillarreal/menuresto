@@ -79,21 +79,13 @@ import Confirm from '../components/Confirm.vue';
 // Composables
 import { useCategoria } from '../composables/categorias';
 import { useErrorHandler } from '../composables/errorHandler';
+import { useReglas } from "../composables/reglas";
 // Stores
 import { useCategoriasStore } from "../stores/categorias";
 
 const categoriasStore = useCategoriasStore()
 const form = ref(false);
 const nombre = ref('');
-const rules = ref({
-  required: (value) => !!value || 'Obligatorio',
-  min8: (v) => v.length >= 8 || 'Min 8 caracteres',
-  mayor0: (v) => v.length > 0 || 'Sólo números positivos',
-  max20: (value) => value.length <= 20 || 'Max 20 caracteres',
-  max50: (value) =>
-    value == undefined || value.length <= 50 || 'Max 50 caracteres',
-});
-
 const filter = ref('');
 const listaCategorias = ref([]);
 const record = ref({
@@ -113,14 +105,16 @@ const confirmarShow = ref(false);
 const confirmarTitulo = ref('');
 const confirmarMensaje = ref('');
 
+// Composables
 const { getCategorias, updateCategoria, insertCategoria, removeCategoria } =
   useCategoria();
+const { rules } = useReglas();
 
 onMounted(async () => {
   listaCategorias.value = categoriasStore.categorias;
 });
 
-watch(()=>
+watch(() =>
   categoriasStore.categorias,
   async (newData, oldData) => {
     listaCategorias.value = newData;

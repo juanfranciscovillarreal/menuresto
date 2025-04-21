@@ -1,6 +1,5 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { supabase } from '../lib/supabase'
-// import { supabase } from '../supabaseClient';
 
 export function useItem() {
   const isEditing = ref(false);

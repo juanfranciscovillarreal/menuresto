@@ -36,7 +36,12 @@
 // export default router
 
 import { createMemoryHistory, createWebHistory, createRouter } from 'vue-router'
-
+import { supabase } from '../lib/supabase'
+// Composables
+import { useAuth } from '../composables/auth';
+// Stores
+import { useAuthStore } from "../stores/auth";
+// Pages
 import Inicio from '../pages/Inicio.vue'
 import Principal from '../pages/Principal.vue'
 import Contacto from '../pages/Contacto.vue'
@@ -59,7 +64,9 @@ import Item from '@/pages/Item.vue'
 import NewPass from '@/pages/NewPass.vue'
 import Empresa from '@/pages/Empresa.vue'
 import MenuAbm from '@/pages/MenuAbm.vue'
-import { supabase } from '../lib/supabase'
+
+// Composables
+const { getSession } = useAuth();
 
 const routes = [
   {
@@ -104,26 +111,23 @@ const routes = [
     path: '/categoria',
     name: 'Categoria',
     component: Categoria,
-    meta: { requiresAuth: true },
   },
   {
     path: '/item',
     name: 'Item',
     component: Item,
-    meta: { requiresAuth: true },
   },
   {
     path: '/empresa',
     name: 'Empresa',
     component: Empresa,
-    meta: { requiresAuth: true },
   },
   {
     path: '/menuabm',
     name: 'MenuAbm',
     component: MenuAbm,
-    meta: { requiresAuth: true },
   },
+
   {
     path: '/Menu/:empresa',
     component: Home,
@@ -185,33 +189,17 @@ router.onError((error) => {
   console.log(`Router error: ${error.message}`);
 })
 
-router.beforeEach(async (to, from, next) => {
-  try {
-    if (to.meta.requiresAuth) {
-      let user = await getUser(next);
-      if (user.session == null) {
-        console.log('Debe iniciar sesión');
-        next("/Login")
-      } else {
-        // console.log(`Usuario: ${JSON.stringify(user)}`);
-        next();
-      }
-    }
-    else {
-      next();
-    }
-  } catch (error) {
-    next("/Login");
+router.beforeEach(async (to, _, next) => {
+  const authStore = useAuthStore();
+  let session = null;
+
+  session = await getSession();
+  authStore.setSession(session);
+
+  if (to.meta.requiresAuth && !session) {
+    next("/LogIn");
+  } else {
+    next();
   }
-
-})
-
-async function getUser(next) {
-  const { data, error } = await supabase.auth.getSession();
-
-  if (error) throw error
-
-  return data;
-}
-
+});
 export default router

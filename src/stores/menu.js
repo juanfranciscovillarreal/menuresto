@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 export const useMenuStore = defineStore('menu', () => {
   // Estados
@@ -13,8 +13,12 @@ export const useMenuStore = defineStore('menu', () => {
   const menu = ref([])
 
   // Getters
+  const duplicar = computed(() => count.value * 2)
 
   // Actions
+  function incrementar() {
+    count.value++
+  }
 
   function totalizar() {
     total.value = pedido.value.reduce(function (prev, cur) {
@@ -49,6 +53,8 @@ export const useMenuStore = defineStore('menu', () => {
     expandir,
     pedido,
     totalizar,
+    duplicar,
+    incrementar,
     expandirContraerMenu,
     expandirMenu,
     contraerMenu,

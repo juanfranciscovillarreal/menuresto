@@ -15,13 +15,16 @@
       <v-col lg="6" md="6" sm="12">
         <v-data-table :headers="categoriasHeaders" :items="listaMenu" item-value="id" show-expand hide-default-footer
           hide-default-header :loading="loadingMenu">
-
           <template v-slot:loading>
             <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
           </template>
 
           <!-- Categorías -->
-          <template v-slot:item.data-table-expand="{ internalItem, isExpanded, toggleExpand }">
+          <template v-slot:item.data-table-expand="{
+      internalItem,
+      isExpanded,
+      toggleExpand,
+    }">
             <div class="d-flex ga-2 justify-end">
               <v-icon color="medium-emphasis" icon="mdi-pencil" size="small"
                 @click="editCategoria(internalItem.value)"></v-icon>
@@ -32,10 +35,12 @@
               <v-icon color="medium-emphasis" icon="mdi-plus" size="small"
                 @click="addItem(internalItem.value)"></v-icon>
 
-              <v-btn :icon="isExpanded(internalItem) ? 'mdi-chevron-up' : 'mdi-chevron-down'" color="medium-emphasis"
-                density="comfortable" size="small" variant="outlined" @click="toggleExpand(internalItem)">
+              <v-btn :icon="isExpanded(internalItem)
+        ? 'mdi-chevron-up'
+        : 'mdi-chevron-down'
+      " color="medium-emphasis" density="comfortable" size="small" variant="outlined"
+                @click="toggleExpand(internalItem)">
               </v-btn>
-
             </div>
           </template>
 
@@ -73,7 +78,7 @@
     <v-form v-model="formCategoria" @submit.prevent="onSubmitCategoria">
       <v-card>
         <v-card-title class="bg-surface-light">
-          {{ getDialogTitle('Categoría') }}
+          {{ getDialogTitle("Categoría") }}
         </v-card-title>
 
         <v-card-text>
@@ -105,7 +110,7 @@
       <v-form v-model="formItem" @submit.prevent="onSubmitItem">
         <v-card>
           <v-card-title class="bg-surface-light">
-            {{ getDialogTitle('Item') }}
+            {{ getDialogTitle("Item") }}
           </v-card-title>
 
           <v-card-text>
@@ -158,103 +163,96 @@
   <Confirm :show="confirmarShow" :titulo="confirmarTitulo" :mensaje="confirmarMensaje"
     @confirmarCerrar="confirmarShow = false" @confirmarAceptar="confirmarAceptar">
   </Confirm>
-
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from "vue";
 // Components
-import Dialog from '../components/Dialog.vue';
-import ToolBar from '../components/ToolBar.vue';
-import Confirm from '../components/Confirm.vue';
+import Dialog from "../components/Dialog.vue";
+import ToolBar from "../components/ToolBar.vue";
+import Confirm from "../components/Confirm.vue";
+import Avatar from "../components/Avatar.vue";
 // Composables
-import { useErrorHandler } from '../composables/errorHandler';
-import { useCategoria } from '../composables/categorias';
-import { useItem } from '../composables/items';
-import { useMenu } from '../composables/menu';
+import { useErrorHandler } from "../composables/errorHandler";
+import { useCategoria } from "../composables/categorias";
+import { useItem } from "../composables/items";
+import { useMenu } from "../composables/menu";
+import { useReglas } from "../composables/reglas";
 // Stores
 import { useCategoriasStore } from "../stores/categorias";
 import { useItemsStore } from "../stores/items";
 import { useEmpresaStore } from "../stores/empresa";
 import { useMenuStore } from "../stores/menu";
 // Assets
-import imgUrl from '../assets/image.png'
+import imgUrl from "../assets/image.png";
 
 // Constants
 const listaCategorias = ref([]);
 const menu = ref([]);
-const loadingMenu = ref(false)
-
-const rules = ref({
-  required: (value) => !!value || 'Obligatorio',
-  min8: (v) => v.length >= 8 || 'Min 8 caracteres',
-  mayor0: (v) => v.length > 0 || 'Sólo números positivos',
-  max20: (value) => value.length <= 20 || 'Max 20 caracteres',
-  max50: (value) =>
-    (value == undefined || value.length <= 50) || 'Max 50 caracteres',
-});
-
+const loadingMenu = ref(false);
 const dialogShow = ref(false);
-const dialogTitulo = ref('');
-const dialogMensaje = ref('');
+const dialogTitulo = ref("");
+const dialogMensaje = ref("");
 const formCategoria = ref(false);
 const formItem = ref(false);
 const DEFAULT_RECORD = ref({
-  id: '',
-  nombre: '',
+  id: "",
+  nombre: "",
 });
 const DEFAULT_RECORD_ITEM = ref({
-  id: '',
-  nombre: '',
-  descripcion: '',
+  id: "",
+  nombre: "",
+  descripcion: "",
   id_categoria: 0,
   foto: imgUrl,
-  precio: '',
+  precio: "",
 });
 const recordCategoria = ref({
-  id: '',
-  nombre: '',
+  id: "",
+  nombre: "",
 });
 
 const recordItem = ref({
-  id: '',
-  nombre: '',
-  descripcion: '',
+  id: "",
+  nombre: "",
+  descripcion: "",
   id_categoria: 0,
-  foto: '',
-  precio: '',
+  foto: "",
+  precio: "",
 });
 
 const dialogCategoria = ref(false);
 const dialogItem = ref(false);
 const isEditing = ref(false);
 const categoriasHeaders = ref([
-  { title: 'Categoría', key: 'nombre' },
+  { title: "Categoría", key: "nombre" },
   {
-    title: '',
-    key: 'actions',
-    align: 'end',
+    title: "",
+    key: "actions",
+    align: "end",
     sortable: false,
-    class: 'my-header-style',
+    class: "my-header-style",
   },
 ]);
-const filter = ref('');
+const filter = ref("");
 const listaMenu = ref([]);
 
 const confirmarShow = ref(false);
-const confirmarTitulo = ref('');
-const confirmarMensaje = ref('');
+const confirmarTitulo = ref("");
+const confirmarMensaje = ref("");
 
 // Composables
-const { getCategorias, updateCategoria, insertCategoria, removeCategoria } = useCategoria();
+const { getCategorias, updateCategoria, insertCategoria, removeCategoria } =
+  useCategoria();
 const { getItems, updateItem, insertItem, removeItem } = useItem();
 const { getMenu } = useMenu();
+const { rules } = useReglas();
 
 // Stores
-const categoriasStore = useCategoriasStore()
-const itemsStore = useItemsStore()
-const empresaStore = useEmpresaStore()
-const menuStore = useMenuStore()
+const categoriasStore = useCategoriasStore();
+const itemsStore = useItemsStore();
+const empresaStore = useEmpresaStore();
+const menuStore = useMenuStore();
 
 onMounted(async () => {
   try {
@@ -267,22 +265,21 @@ onMounted(async () => {
   }
 });
 
-watch(() =>
-  menuStore.menu,
+watch(
+  () => menuStore.menu,
   async (newData, oldData) => {
     listaMenu.value = newData;
   },
   { deep: true }
 );
 
-watch(() =>
-  categoriasStore.categorias,
+watch(
+  () => categoriasStore.categorias,
   async (newData, oldData) => {
     listaCategorias.value = newData;
   },
   { deep: true }
 );
-
 
 function listar() {
   listaMenu.value = menu.value;
@@ -296,7 +293,7 @@ function filtrar() {
     item.nombre.toLowerCase().includes(filtro)
   );
 
-  if (filtro != '') listaMenu.value = menuFiltrado;
+  if (filtro != "") listaMenu.value = menuFiltrado;
 }
 
 function updateAvatar(avatar) {
@@ -353,7 +350,7 @@ function editCategoria(id) {
 
 function editItem(item) {
   isEditing.value = true;
-  if (item.foto == '' || item.foto == null) {
+  if (item.foto == "" || item.foto == null) {
     item.foto = imgUrl;
   }
   recordItem.value = { ...item };
@@ -363,7 +360,7 @@ function editItem(item) {
 async function deleteCategoria(categoria) {
   recordCategoria.value = { ...categoria.raw };
   confirmarMensaje.value = `¿Elimina la Categoría ${categoria.columns.nombre}?`;
-  confirmarTitulo.value = 'Eliminar';
+  confirmarTitulo.value = "Eliminar";
   confirmarShow.value = true;
 }
 

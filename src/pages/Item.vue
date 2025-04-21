@@ -115,6 +115,7 @@ import Confirm from '../components/Confirm.vue';
 import { useErrorHandler } from '../composables/errorHandler';
 import { useCategoria } from '../composables/categorias';
 import { useItem } from '../composables/items';
+import { useReglas } from "../composables/reglas";
 // Stores
 import { useCategoriasStore } from "../stores/categorias";
 import { useItemsStore } from "../stores/items";
@@ -128,18 +129,6 @@ const nombre = ref('');
 const descripcion = ref('');
 const categoria = ref();
 const precio = ref();
-const rules = ref({
-  required: (value) => !!value || 'Obligatorio',
-  min8: (v) => v.length >= 8 || 'Min 8 caracteres',
-  mayor0: (v) => (v.length > 0) || 'Sólo números positivos',
-  max20: (value) => value.length <= 20 || 'Max 20 caracteres',
-  max50: (value) =>
-    value == undefined || value.length <= 50 || 'Max 50 caracteres',
-  decimal: (value) => {
-    const pattern = /^((?!0)\d{1,5}|0|\.\d{1,2})($|\.$|\.\d{1,2}$)/;
-    return pattern.test(value) || 'Importe inválido.';
-  },
-});
 const imageUrl = ref('');
 const image = ref('');
 const preview = ref('https://cdn.vuetifyjs.com/images/parallax/material.jpg');
@@ -175,6 +164,7 @@ const confirmarMensaje = ref('');
 // Composables
 const { getCategorias } = useCategoria();
 const { getItems, updateItem, insertItem, removeItem } = useItem();
+const { rules } = useReglas();
 
 // Stores
 const categoriasStore = useCategoriasStore()

@@ -39,7 +39,7 @@
       </v-list-item>
 
       <!-- Cerrar sesión -->
-      <v-list-item link @click="signOut()">
+      <v-list-item link @click="signOutSession()">
         <template v-slot:prepend>
           <v-icon icon="mdi-logout"></v-icon>
         </template>
@@ -72,17 +72,26 @@
 </template>
 
 <script setup>
+import { ref, watch } from 'vue'
 import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+
+// Components
+import Usuario from "../components/Usuario.vue";
+import FloatingButtons from '@/components/FloatingButtons.vue';
+
+// Composables
+import { useAuth } from '../composables/auth';
+import { useErrorHandler } from '@/composables/errorHandler'
+
+// Stores
 import { useMenuStore } from "../stores/menu";
 import { useUsuarioStore } from "../stores/usuario";
 import { useEmpresaStore } from "../stores/empresa";
-import { ref, watch } from 'vue'
-import { supabase } from '../lib/supabase'
-import { useErrorHandler } from '@/composables/errorHandler'
-import Usuario from "../components/Usuario.vue";
+import { useAuthStore } from "../stores/auth";
+
+// Assets
 import imgUrl from '../assets/InteliCarta.png'
-import FloatingButtons from '@/components/FloatingButtons.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -103,6 +112,12 @@ const varios = ref([
   ["Acerca de InteliCarta...", "mdi-information", '/Acerca'],
 ])
 
+// Stores
+const authStore = useAuthStore();
+
+// Composables
+const { signOut } = useAuth();
+
 onMounted(() => {
 })
 
@@ -117,9 +132,12 @@ function getImage() {
 
   return empresaStore.empresa.logo;
 }
-async function signOut() {
+
+async function signOutSession() {
   try {
-    const { error } = await supabase.auth.signOut();
+    authStore.setSession(null);
+    signOut();
+
     router.push('/');
 
     if (error) throw error

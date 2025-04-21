@@ -22,23 +22,20 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { supabase } from '../lib/supabase'
+// Components
 import ToolBar from '@/components/ToolBar.vue';
+// Composables
 import { useErrorHandler } from '@/composables/errorHandler'
+import { useReglas } from "../composables/reglas";
 
 const router = useRouter();
 const form = ref(false);
 const email = ref('juanfranciscovillarreal@hotmail.com');
 const password = ref('supabase.4321');
 const visible = ref(false);
-const rules = ref({
-    required: (value) => !!value || 'Obligatorio.',
-    counter: (value) => value.length <= 20 || 'Máximo 20 caracteres',
-    email: (value) => {
-        const pattern =
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return pattern.test(value) || 'Correo inválido.';
-    },
-});
+
+// Composables
+const { rules } = useReglas();
 
 onMounted(() => { });
 

@@ -18,7 +18,7 @@
 
     <!-- Título App -->
     <!-- <v-toolbar-title>{{ getTitulo }}</v-toolbar-title> -->
-    <v-toolbar-title>Intelicarta</v-toolbar-title>
+    <v-toolbar-title>Intelicarta</v-toolbar-title> 
 
     <!-- Espacio -->
     <v-spacer v-if="route.path == `/${empresa}/Menu`"></v-spacer>
@@ -118,8 +118,8 @@
           Pedido vacío
         </v-card-title>
 
-        <vue-qrcode v-if="menuStore.pedido.length > 0" :value="qrValue" :width="300" type="image/png"
-          :color="{ dark: '#000000ff' }" :margin="6" :scale="4" />
+        <!--vue-qrcode v-if="menuStore.pedido.length > 0" :value="qrValue" :width="300" type="image/png"
+          :color="{ dark: '#000000ff' }" :margin="6" :scale="4" /-->
         <v-card-text v-else="menuStore.pedido.length = 0">
           Seleccione algún item del menú
         </v-card-text>
@@ -137,8 +137,8 @@ import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useMenuStore } from "../stores/menu";
 import { useEmpresaStore } from "../stores/empresa";
-import { ref, watch } from 'vue'
-import VueQrcode from 'vue-qrcode';
+import { ref } from 'vue'
+//import VueQrcode from 'vue-qrcode';
 import Buscar from '../components/Buscar.vue';
 import { supabase } from '../lib/supabase'
 import { useErrorHandler } from '@/composables/errorHandler'
@@ -157,8 +157,6 @@ const varios = ref([])
 const items = ref([])
 
 onMounted(() => {
-  console.log(`Empresa: ${route.params.empresa}`);
-  empresa.value = route.params.empresa;
   getEmpresa();
 })
 
@@ -175,6 +173,7 @@ async function getEmpresa() {
     }
 
     if (data) {
+      empresa.value = route.params.empresa;
       empresaStore.empresa = data;
       links.value = [
         ["Inicio", "mdi-home", "/" + empresa.value + "/Inicio"],
@@ -209,7 +208,7 @@ watch(drawer, (newValue, oldValue) => {
 })
 
 const getImage = computed(() => {
-  
+  debugger
   return empresaStore.empresa.logo != '' ? empresaStore.empresa.logo : '@/assets/Empresa.png';
 })
 

@@ -1,12 +1,11 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { supabase } from '../lib/supabase'
-// import { supabase } from '../supabaseClient';
 
 export function useEmpresa() {
 
   async function getEmpresa(id) {
     const { data, error, status } = await supabase
-      .from('profiles')
+      .from('Empresa')
       .select()
       .eq('id', id)
       .single();
@@ -17,7 +16,7 @@ export function useEmpresa() {
 
   async function updateEmpresa(empresa) {
     const { error } = await supabase
-      .from('profiles')
+      .from('Empresa')
       .update(empresa)
       .eq('id', empresa.id);
 

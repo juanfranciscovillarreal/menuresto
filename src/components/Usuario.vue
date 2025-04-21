@@ -25,7 +25,7 @@
                     <template v-slot:prepend>
                         <v-icon icon="mdi-account"></v-icon>
                     </template>
-                    <v-list-item-title>Perfil</v-list-item-title>
+                    <v-list-item-title>Empresa</v-list-item-title>
                 </v-list-item>
 
                 <v-list-item link @click="signOut()">

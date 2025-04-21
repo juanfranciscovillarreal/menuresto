@@ -49,7 +49,6 @@ export const useMenuStore = defineStore('menu', () => {
     expandir,
     pedido,
     totalizar,
-    incrementar,
     expandirContraerMenu,
     expandirMenu,
     contraerMenu,

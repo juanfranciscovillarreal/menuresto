@@ -13,10 +13,10 @@
     "@mdi/font": "7.4.47",
     "@supabase/supabase-js": "^2.48.1",
     "roboto-fontface": "*",
-    "vue": "^3.4.31",
+    "vue": "^3.5.13",
     "vue-qrcode": "^2.2.2",
     "vue-qrcode-reader": "^5.7.0",
-    "vuetify": "^3.7.9"
+    "vuetify": "^3.8.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",

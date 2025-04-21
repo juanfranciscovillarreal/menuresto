@@ -157,6 +157,8 @@ const varios = ref([])
 const items = ref([])
 
 onMounted(() => {
+  console.log(`Empresa: ${route.params.empresa}`);
+  empresa.value = route.params.empresa;
   getEmpresa();
 })
 
@@ -173,7 +175,6 @@ async function getEmpresa() {
     }
 
     if (data) {
-      empresa.value = route.params.empresa;
       empresaStore.empresa = data;
       links.value = [
         ["Inicio", "mdi-home", "/" + empresa.value + "/Inicio"],
@@ -208,7 +209,7 @@ watch(drawer, (newValue, oldValue) => {
 })
 
 const getImage = computed(() => {
-  debugger
+  
   return empresaStore.empresa.logo != '' ? empresaStore.empresa.logo : '@/assets/Empresa.png';
 })
 

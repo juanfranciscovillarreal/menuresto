@@ -53,62 +53,36 @@
 
   <!-- </v-responsive> -->
   <!-- </v-container> -->
+
+  <Dialog :show="dialogShow" :titulo="dialogTitulo" :mensaje="dialogMensaje" @dialogCerrar="dialogShow = false">
+  </Dialog>
 </template>
 
 <script setup>
-import Carousel from '@/components/Carousel.vue';
-import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router'
+// Components
+import Carousel from '@/components/Carousel.vue';
+import Sugerencias from '@/components/Sugerencias.vue';
+import Dialog from '@/components/Dialog.vue';
+// Composables
+import { useErrorHandler } from '@/composables/errorHandler'
+// Stores
 import { useCategoriasStore } from "../stores/categorias";
-import { useMenuStore } from "../stores/menu";
 import { useEmpresaStore } from "../stores/empresa";
-import { supabase } from '../lib/supabase'
 
-const categoriasStore = useCategoriasStore()
-const menuStore = useMenuStore()
-const empresaStore = useEmpresaStore()
 const router = useRouter()
+const dialogShow = ref(false);
+const dialogTitulo = ref('');
+const dialogMensaje = ref('');
+// Stores
+const categoriasStore = useCategoriasStore()
+const empresaStore = useEmpresaStore()
 
-onMounted(() => {
-  getCategorias();
-  getMenu();
+onMounted(async () => {
+
 })
 
-async function getCategorias() {
-  const { data, error } = await supabase
-    .from('Categoria')
-    .select('id, nombre');
-
-  if (error){
-    console.log(`Error en getCategorias: ${error}`);
-    throw error;
-  }
-
-  data.unshift({
-    id: 0,
-    nombre: "Todos"
-  });
-  categoriasStore.categorias = data;
-}
-
-async function getMenu() {
-  const { data, error } = await supabase
-    .from('Categoria')
-    .select(`id, nombre,
-             Item (id, id_categoria, nombre, descripcion, precio, foto)`
-    )
-
-  if (error) {
-    console.log(`Error en getMenu: ${error}`);
-    throw error;
-  }
-
-  if (menuStore.pedido.length == 0) {
-    // Cargo el menú completo si no hay un pedido hecho
-    menuStore.menuCompleto = data;
-  }
-
-}
 
 function seleccionar(categoria, index) {
   categoriasStore.seleccionada = categoria;

@@ -11,13 +11,14 @@
                     <v-list-item v-for="item in categoria.Item" style="padding: 0px; min-height: auto;">
 
                         <!-- Título -->
-                        <v-list-item-title v-if="!item.esCategoria" class="text-precio-2 pl-2" @click="verDetalle(item)">
+                        <v-list-item-title v-if="!item.esCategoria" class="text-precio-2 pl-2"
+                            @click="verDetalle(item)">
                             {{ item.nombre }}
                         </v-list-item-title>
 
                         <template v-slot:append v-if="!item.esCategoria">
                             <v-list-item-subtitle class="mr-2">
-                                {{ $filters.toPesos(item.precio) }}
+                                {{ toPesos(item.precio) }}
                             </v-list-item-subtitle>
 
                             <!-- Favorito -->
@@ -61,7 +62,7 @@
                             <!-- Precio -->
                             <v-col class="text-right" cols="6">
                                 <v-card-subtitle>
-                                    <span class="me-1">{{ $filters.toPesos(dialogSubtitulo) }}</span>
+                                    <span class="me-1">{{ toPesos(dialogSubtitulo) }}</span>
                                 </v-card-subtitle>
                             </v-col>
                         </v-row>
@@ -79,24 +80,31 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
+// Components
+import Categorias from '@/components/Categorias.vue';
+// Composables
+import { useFiltros } from '@/composables/filtros'
+// Stores
 import { useMenuStore } from "../stores/menu";
 import { useCategoriasStore } from "../stores/categorias";
 
-const categoriasStore = useCategoriasStore()
-const menuStore = useMenuStore()
-const texto = ref('')
 const categoriaSeleccionada = ref(0)
 const dialog = ref(false)
 const dialogTitulo = ref('')
 const dialogSubtitulo = ref('')
 const dialogDescripcion = ref('')
 const dialogFoto = ref('')
+// Composables
+const { toPesos } = useFiltros();
+// Stores
+const categoriasStore = useCategoriasStore()
+const menuStore = useMenuStore()
 
 onMounted(() => {
     menuStore.menuFiltrado = menuStore.menuCompleto;
     menuStore.expandirMenu();
-   categoriaSeleccionada.value = categoriasStore.seleccionada;
+    categoriaSeleccionada.value = categoriasStore.seleccionada;
 })
 
 function filtrarPorCategoria(toggle, categoria) {

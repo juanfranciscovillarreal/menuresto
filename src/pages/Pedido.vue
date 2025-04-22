@@ -30,7 +30,7 @@
           <v-btn icon="mdi-plus" size="x-small" variant="text" @click="sumarItem(item)"></v-btn>
         </td>
         <td class="text-right" style="padding: 0px;">
-          {{ $filters.toPesos(item.subtotal) }}
+          {{ toPesos(item.subtotal) }}
         </td>
         <td style="padding-left: 0.5em;">
           <v-icon size="small" @click="deleteItem(item)">
@@ -45,7 +45,7 @@
         <td style="padding: 0px;"></td>
         <td style="padding: 0px;"></td>
         <td style="padding: 0px;"></td>
-        <td v-text="$filters.toPesos(menuStore.total)" style="text-align: end; padding: 0px;"></td>
+        <td v-text="toPesos(menuStore.total)" style="text-align: end; padding: 0px;"></td>
         <td></td>
       </tr>
     </tfoot> -->
@@ -56,7 +56,7 @@
 
     <v-spacer></v-spacer>
 
-    {{ $filters.toPesos(menuStore.total) }}
+    {{ toPesos(menuStore.total) }}
   </v-toolbar>
 
 </template>
@@ -64,11 +64,16 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+// Composables
+import { useFiltros } from '@/composables/filtros'
+// Stores
 import { useMenuStore } from "../stores/menu";
 
 const router = useRouter()
 const menuStore = useMenuStore()
 const itemIndex = ref(-1)
+// Composables
+const { toPesos } = useFiltros();
 
 onMounted(() => {
   totalizar();

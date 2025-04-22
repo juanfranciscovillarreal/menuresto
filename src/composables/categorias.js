@@ -42,5 +42,16 @@ export function useCategoria() {
     return data;
   }
 
-  return { getCategorias, updateCategoria, insertCategoria, removeCategoria };
+  async function getCategoriasPorEmpresaId(id) {
+    const { data, error, status } = await supabase
+      .from('Categoria')
+      .select('id, nombre')
+      .eq('user_id', id)
+      .order('nombre', { ascending: true });
+
+    if (error) throw error;
+    return data;
+  }
+
+  return { getCategorias, updateCategoria, insertCategoria, removeCategoria, getCategoriasPorEmpresaId };
 }

@@ -133,21 +133,30 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+//import VueQrcode from 'vue-qrcode';
+// Components
+import Buscar from '../components/Buscar.vue';
+// Composables
+import { useErrorHandler } from '@/composables/errorHandler'
+import { useEmpresa } from '../composables/empresa';
+import { useCategoria } from '../composables/categorias';
+import { useMenu } from '../composables/menu';
+// Stores
+import { useCategoriasStore } from "../stores/categorias";
 import { useMenuStore } from "../stores/menu";
 import { useEmpresaStore } from "../stores/empresa";
-import { ref } from 'vue'
-//import VueQrcode from 'vue-qrcode';
-import Buscar from '../components/Buscar.vue';
-import { supabase } from '../lib/supabase'
-import { useErrorHandler } from '@/composables/errorHandler'
+
+// Composables
+const { getEmpresaPorNombre } = useEmpresa();
+const { getCategoriasPorEmpresaId } = useCategoria();
+const { getMenu } = useMenu();
 
 // const theme = ref('light')
 const router = useRouter()
 const route = useRoute()
-const menuStore = useMenuStore()
-const empresaStore = useEmpresaStore()
+
 const verQR = ref(false)
 const qrValue = ref('')
 const drawer = ref(false)
@@ -156,51 +165,75 @@ const links = ref([])
 const varios = ref([])
 const items = ref([])
 
-onMounted(() => {
-  getEmpresa();
+// Stores
+const categoriasStore = useCategoriasStore()
+const menuStore = useMenuStore()
+const empresaStore = useEmpresaStore()
+
+onMounted(async () => {
+  empresa.value = route.params.empresa;
+  await getEmpresaPorNombreData();
+  await getCategoriasPorEmpresaIdData();
+  await getMenuData();
 })
 
-async function getEmpresa() {
+async function getEmpresaPorNombreData() {
   try {
-    const { data, error } = await supabase
-      .from('Empresa')
-      .select('id, nombre')
-      .eq('nombre', empresa.value)
-      .single();
+    await getEmpresaPorNombre(empresa.value)
+      .then((data) => {
+        if (data) {
+          empresaStore.empresa = data;
+          links.value = [
+            ["Inicio", "mdi-home", "/" + empresa.value + "/Inicio"],
+            ["Menu", "mdi-library", "/" + empresa.value + "/Menu"],
+            ["Contacto", "mdi-map-marker", "/" + empresa.value + "/Contacto"],
+            ["Reservas", "mdi-calendar-month", "/" + empresa.value + "/Reserva"],
+            ["Divider", "", ""],
+            ["Ajustes", "mdi-cog", "/" + empresa.value + "/Ajustes"],
+            ["Wi-Fi", "mdi-wifi", "/" + empresa.value + "/WiFi"],
+          ]
 
-    if (error) {
-      throw error;
-    }
+          varios.value = [
+            ["Acerca de InteliCarta...", "mdi-information", `/${empresa.value}/Acerca`],
+          ]
 
-    if (data) {
-      empresa.value = route.params.empresa;
-      empresaStore.empresa = data;
-      links.value = [
-        ["Inicio", "mdi-home", "/" + empresa.value + "/Inicio"],
-        ["Menu", "mdi-library", "/" + empresa.value + "/Menu"],
-        ["Contacto", "mdi-map-marker", "/" + empresa.value + "/Contacto"],
-        ["Reservas", "mdi-calendar-month", "/" + empresa.value + "/Reserva"],
-        ["Divider", "", ""],
-        ["Ajustes", "mdi-cog", "/" + empresa.value + "/Ajustes"],
-        ["Wi-Fi", "mdi-wifi", "/" + empresa.value + "/WiFi"],
-      ]
+          // items.value = [
+          //   { text: 'Ajustes', icon: 'mdi-cog', path: `/${empresa.value}/Ajustes` },
+          // ]
 
-      varios.value = [
-        ["Acerca de InteliCarta...", "mdi-information", `/${empresa.value}/Acerca`],
-      ]
+          router.replace(`/${data.nombre}/Inicio`);
+        } else {
+          router.push('/');
+        }
 
-      // items.value = [
-      //   { text: 'Ajustes', icon: 'mdi-cog', path: `/${empresa.value}/Ajustes` },
-      // ]
-
-      router.replace(`/${data.nombre}/Inicio`);
-    } else {
-      router.push('/');
-    }
+      });
   } catch (error) {
     router.push('/PageNotFound');
     console.log(`Error en getEmpresa: ${useErrorHandler(error)}`);
   }
+}
+
+async function getCategoriasPorEmpresaIdData() {
+  // TODO: ver si se puede usar una vista parametrizada o procedimiento almacenado
+  //       en lugar de consultar directamente la tabla
+  await getCategoriasPorEmpresaId(empresaStore.empresa.id)
+    .then((data) => {
+      data.unshift({
+        id: 0,
+        nombre: "Todos"
+      });
+      categoriasStore.categorias = data;
+    });
+}
+
+async function getMenuData() {
+  await getMenu(empresaStore.empresa.id)
+    .then((data) => {
+      if (menuStore.pedido.length == 0) {
+        // Cargo el menú completo si no hay un pedido hecho
+        menuStore.menuCompleto = data;
+      }
+    });
 }
 
 watch(drawer, (newValue, oldValue) => {

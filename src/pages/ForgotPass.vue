@@ -21,12 +21,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { supabase } from '../lib/supabase'
+import { supabase } from '@/lib/supabase'
 // Components
 import ToolBar from '@/components/ToolBar.vue';
 // Composables
 import { useErrorHandler } from '@/composables/errorHandler'
-import { useReglas } from "../composables/reglas";
+import { useReglas } from "@/composables/reglas";
 
 const router = useRouter();
 const form = ref(false);

@@ -2,7 +2,7 @@
     <div class="d-flex align-center justify-space-around">
       <v-card variant="text">
         <!-- <v-avatar size="200">
-          <v-img src="../assets/Suss.png"></v-img>
+          <v-img src="@/assets/Suss.png"></v-img>
         </v-avatar> -->
         <v-icon icon="mdi-ballot" size="x-large" style="font-size: 15em;"></v-icon>
       </v-card>

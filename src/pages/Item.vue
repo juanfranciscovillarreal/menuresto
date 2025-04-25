@@ -107,20 +107,20 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 // Components
-import Avatar from '../components/Avatar.vue';
-import Dialog from '../components/Dialog.vue';
-import ToolBar from '../components/ToolBar.vue';
-import Confirm from '../components/Confirm.vue';
+import Avatar from '@/components/Avatar.vue';
+import Dialog from '@/components/Dialog.vue';
+import ToolBar from '@/components/ToolBar.vue';
+import Confirm from '@/components/Confirm.vue';
 // Composables
-import { useErrorHandler } from '../composables/errorHandler';
-import { useCategoria } from '../composables/categorias';
-import { useItem } from '../composables/items';
-import { useReglas } from "../composables/reglas";
+import { useErrorHandler } from '@/composables/errorHandler';
+import { useCategoria } from '@/composables/categorias';
+import { useItem } from '@/composables/items';
+import { useReglas } from "@/composables/reglas";
 // Stores
-import { useCategoriasStore } from "../stores/categorias";
-import { useItemsStore } from "../stores/items";
+import { useCategoriasStore } from "@/stores/categorias";
+import { useItemsStore } from "@/stores/items";
 // Assets
-import imgUrl from '../assets/image.png';
+import imgUrl from '@/assets/image.png';
 
 // Constants
 const form = ref(false);

@@ -67,14 +67,17 @@ import Sugerencias from '@/components/Sugerencias.vue';
 import Dialog from '@/components/Dialog.vue';
 // Composables
 import { useErrorHandler } from '@/composables/errorHandler'
+import { useAplicacion } from '@/composables/aplicacion';
 // Stores
-import { useCategoriasStore } from "../stores/categorias";
-import { useEmpresaStore } from "../stores/empresa";
+import { useCategoriasStore } from "@/stores/categorias";
+import { useEmpresaStore } from "@/stores/empresa";
 
 const router = useRouter()
 const dialogShow = ref(false);
 const dialogTitulo = ref('');
 const dialogMensaje = ref('');
+// Composables
+const { nombreApp } = useAplicacion();
 // Stores
 const categoriasStore = useCategoriasStore()
 const empresaStore = useEmpresaStore()
@@ -85,8 +88,9 @@ onMounted(async () => {
 
 
 function seleccionar(categoria, index) {
+  let root = `/${nombreApp.value}/${empresaStore.empresa.nombre}`;
   categoriasStore.seleccionada = categoria;
   categoriasStore.index = index;
-  router.push(`/${empresaStore.empresa.nombre}/Menu`);
+  router.push(`${root}/Principal/Menu`);
 }
 </script>

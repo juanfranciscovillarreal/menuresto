@@ -15,7 +15,7 @@ import 'vuetify/styles'
 
 // Translations provided by Vuetify
 
-import es from '../locales/es'
+import es from '@/locales/es'
 
 // Composables
 import { createVuetify } from 'vuetify'

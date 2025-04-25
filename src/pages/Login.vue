@@ -47,25 +47,25 @@ import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 
 // Assets
-import imgUrl from '../assets/InteliCarta.png'
+import imgUrl from '@/assets/InteliCarta.png'
 // Components
 import ToolBar from '@/components/ToolBar.vue';
 import Dialog from '@/components/Dialog.vue';
 // Composables
 import { useErrorHandler } from '@/composables/errorHandler'
-import { useEmpresa } from '../composables/empresa';
-import { useEmpresaStore } from "../stores/empresa";
-import { useCategoria } from '../composables/categorias';
-import { useItem } from '../composables/items';
-import { useMenu } from '../composables/menu';
-import { useReglas } from "../composables/reglas";
-import { useAuth } from '../composables/auth';
+import { useEmpresa } from '@/composables/empresa';
+import { useEmpresaStore } from "@/stores/empresa";
+import { useCategoria } from '@/composables/categorias';
+import { useItem } from '@/composables/items';
+import { useMenu } from '@/composables/menu';
+import { useReglas } from "@/composables/reglas";
+import { useAuth } from '@/composables/auth';
 // Stores
-import { useCategoriasStore } from "../stores/categorias";
-import { useItemsStore } from "../stores/items";
-import { useUsuarioStore } from "../stores/usuario";
-import { useMenuStore } from "../stores/menu";
-import { useAuthStore } from "../stores/auth";
+import { useCategoriasStore } from "@/stores/categorias";
+import { useItemsStore } from "@/stores/items";
+import { useUsuarioStore } from "@/stores/usuario";
+import { useMenuStore } from "@/stores/menu";
+import { useAuthStore } from "@/stores/auth";
 
 // Constants
 const router = useRouter();

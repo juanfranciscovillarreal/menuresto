@@ -73,15 +73,15 @@
 import { ref, onMounted, watch } from 'vue';
 
 // Components
-import Dialog from '../components/Dialog.vue';
-import ToolBar from '../components/ToolBar.vue';
-import Confirm from '../components/Confirm.vue';
+import Dialog from '@/components/Dialog.vue';
+import ToolBar from '@/components/ToolBar.vue';
+import Confirm from '@/components/Confirm.vue';
 // Composables
-import { useCategoria } from '../composables/categorias';
-import { useErrorHandler } from '../composables/errorHandler';
-import { useReglas } from "../composables/reglas";
+import { useCategoria } from '@/composables/categorias';
+import { useErrorHandler } from '@/composables/errorHandler';
+import { useReglas } from "@/composables/reglas";
 // Stores
-import { useCategoriasStore } from "../stores/categorias";
+import { useCategoriasStore } from "@/stores/categorias";
 
 const categoriasStore = useCategoriasStore()
 const form = ref(false);

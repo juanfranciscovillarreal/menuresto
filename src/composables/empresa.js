@@ -1,5 +1,5 @@
 import { ref, onMounted, onUnmounted } from 'vue';
-import { supabase } from '../lib/supabase'
+import { supabase } from '@/lib/supabase'
 
 export function useEmpresa() {
 
@@ -17,7 +17,7 @@ export function useEmpresa() {
   async function getEmpresaPorNombre(nombre) {
     const { data, error, status } = await supabase
       .from('Empresa')
-      .select('id, nombre')
+      .select()
       .eq('nombre', nombre)
       .single();
 

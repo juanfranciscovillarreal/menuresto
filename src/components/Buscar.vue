@@ -1,6 +1,6 @@
 <template>
     <!-- Cerrar búsqueda-->
-    <v-btn v-if="buscar == true && route.path == '/Menu'" icon>
+    <v-btn v-if="buscar == true && route.path.includes('Menu')" icon>
         <v-icon @click="cerrar()">mdi-close</v-icon>
     </v-btn>
 
@@ -8,12 +8,12 @@
     <v-menu transition="slide-x-reverse-transition">
         <template v-slot:activator="{ props }">
             <!-- Texto a buscar -->
-            <v-text-field v-model="texto" v-if="buscar == true && route.path == '/Menu'" hide-details single-line
+            <v-text-field v-model="texto" v-if="buscar == true && route.path.includes('Menu')" hide-details single-line
                 placeholder="Buscar" append-inner-icon="mdi-magnify">
             </v-text-field>
 
             <!-- Botón Buscar -->
-            <v-btn v-bind="props" v-if="buscar == false && route.path == '/Menu'" icon="mdi-magnify" variant="text"
+            <v-btn v-bind="props" v-if="buscar == false && route.path.includes('Menu')" icon="mdi-magnify" variant="text"
                 @click="buscar = true">
             </v-btn>
         </template>
@@ -23,7 +23,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useMenuStore } from "../stores/menu";
+import { useMenuStore } from "@/stores/menu";
 import { ref, watch } from 'vue'
 
 const router = useRouter()

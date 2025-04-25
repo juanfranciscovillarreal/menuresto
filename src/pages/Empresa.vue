@@ -106,17 +106,17 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
-import { supabase } from '../lib/supabase'
+import { supabase } from '@/lib/supabase'
 // Components
 import ToolBar from '@/components/ToolBar.vue';
 import Dialog from '@/components/Dialog.vue';
 import Avatar from '@/components/Avatar.vue';
 // Composables
 import { useErrorHandler } from '@/composables/errorHandler'
-import { useEmpresa } from '../composables/empresa';
-import { useReglas } from "../composables/reglas";
+import { useEmpresa } from '@/composables/empresa';
+import { useReglas } from "@/composables/reglas";
 // Stores
-import { useEmpresaStore } from "../stores/empresa";
+import { useEmpresaStore } from "@/stores/empresa";
 
 const { updateEmpresa } = useEmpresa();
 const router = useRouter()

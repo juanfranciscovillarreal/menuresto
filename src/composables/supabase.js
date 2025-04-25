@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { useAuth } from '../composables/auth';
+import { useAuth } from '@/composables/auth';
 
 // config
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL

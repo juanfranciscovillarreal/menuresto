@@ -21,7 +21,7 @@
 import { ref, watch, onMounted, computed } from 'vue'
 //import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
 import { useRouter } from 'vue-router'
-import { useMenuStore } from "../stores/menu";
+import { useMenuStore } from "@/stores/menu";
 
 const menuStore = useMenuStore()
 const router = useRouter()

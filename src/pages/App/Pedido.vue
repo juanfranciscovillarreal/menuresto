@@ -67,7 +67,7 @@ import { useRouter } from 'vue-router'
 // Composables
 import { useFiltros } from '@/composables/filtros'
 // Stores
-import { useMenuStore } from "../stores/menu";
+import { useMenuStore } from "@/stores/menu";
 
 const router = useRouter()
 const menuStore = useMenuStore()

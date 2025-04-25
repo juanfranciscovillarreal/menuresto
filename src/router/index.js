@@ -36,49 +36,51 @@
 // export default router
 
 import { createMemoryHistory, createWebHistory, createRouter } from 'vue-router'
-import { supabase } from '../lib/supabase'
 // Composables
-import { useAuth } from '../composables/auth';
+import { useAuth } from '@/composables/auth';
+import { useAplicacion } from '@/composables/aplicacion';
 // Stores
-import { useAuthStore } from "../stores/auth";
-// Pages
-import Inicio from '../pages/Inicio.vue'
-import Principal from '../pages/Principal.vue'
-import Contacto from '../pages/Contacto.vue'
-import WiFi from '../pages/WiFi.vue'
-import Home from '../pages/Home.vue'
-import Ajustes from '../pages/Ajustes.vue'
-import Acerca from '../pages/Acerca.vue'
-import Pedido from '../pages/Pedido.vue'
-import LeerQR from '../pages/LeerQR.vue'
-import Menu from '../pages/Menu.vue'
-import Reserva from '../pages/Reserva.vue'
-import Land from '../pages/Land.vue'
-import PageNotFound from '../pages/PageNotFound.vue'
-import Login from '../pages/Login.vue'
-import SignUp from '../pages/SignUp.vue'
-import ForgotPass from '../pages/ForgotPass.vue'
-import Administracion from '../pages/Administracion.vue'
-import Categoria from '../pages/Categoria.vue'
-import Item from '@/pages/Item.vue'
-import NewPass from '@/pages/NewPass.vue'
+import { useAuthStore } from "@/stores/auth";
+import { useEmpresaStore } from "@/stores/empresa";
+// App Pages
+import Acerca from '@/pages/App/Acerca.vue'
+import Ajustes from '@/pages/App/Ajustes.vue'
+import Contacto from '@/pages/App/Contacto.vue'
+import Home from '@/pages/App/Home.vue'
+import Inicio from '@/pages/App/Inicio.vue'
+import LeerQR from '@/pages/App/LeerQR.vue'
+import Menu from '@/pages/App/Menu.vue'
+import Pedido from '@/pages/App/Pedido.vue'
+import Principal from '@/pages/App/Principal.vue'
+import Reserva from '@/pages/App/Reserva.vue'
+import WiFi from '@/pages/App/WiFi.vue'
+// Admin Pages
+import Administracion from '@/pages/Administracion.vue'
+import Categoria from '@/pages/Categoria.vue'
 import Empresa from '@/pages/Empresa.vue'
+import ForgotPass from '@/pages/ForgotPass.vue'
+import Item from '@/pages/Item.vue'
+import Land from '@/pages/Land.vue'
+import Login from '@/pages/Login.vue'
 import MenuAbm from '@/pages/MenuAbm.vue'
+import NewPass from '@/pages/NewPass.vue'
+import PageNotFound from '@/pages/PageNotFound.vue'
+import SignUp from '@/pages/SignUp.vue'
 
 // Composables
+const { nombreApp } = useAplicacion();
 const { getSession } = useAuth();
-
+const rootMenu = `/${nombreApp.value}/:empresa`;
 const routes = [
   {
     path: '/:pathMatch(.*)*',
     name: 'Error',
     component: PageNotFound,
   },
+  // Site
   {
     path: '/',
     component: Land,
-    children: [
-    ]
   },
   {
     path: '/Login',
@@ -127,56 +129,56 @@ const routes = [
     name: 'MenuAbm',
     component: MenuAbm,
   },
-
+  // App
   {
-    path: '/Menu/:empresa',
+    path: rootMenu,
     component: Home,
-    // redirect: '/:empresa/Inicio',
     children: [
       {
-        path: '/:empresa/Inicio',
+        path: `${rootMenu}/Inicio`,
         component: Inicio,
       },
       {
-        path: '/:empresa/WiFi',
+        path: `${rootMenu}/WiFi`,
         component: WiFi,
       },
       {
-        path: '/:empresa/Contacto',
+        path: `${rootMenu}/Contacto`,
         component: Contacto,
       },
       {
-        path: '/:empresa/Ajustes',
+        path: `${rootMenu}/Ajustes`,
         component: Ajustes,
       },
       {
-        path: '/:empresa/Acerca',
+        path: `${rootMenu}/Acerca`,
         component: Acerca,
       },
       {
-        path: '/:empresa/Reserva',
+        path: `${rootMenu}/Reserva`,
         component: Reserva,
       },
       {
-        path: '/:empresa/Principal',
+        path: `${rootMenu}/Principal`,
         component: Principal,
+        redirect: `${rootMenu}/Principal/Menu`,
         children: [
           {
-            path: '/:empresa/Menu',
+            path: `${rootMenu}/Principal/Menu`,
             component: Menu,
           },
           {
-            path: '/:empresa/Pedido',
+            path: `${rootMenu}/Principal/Pedido`,
             component: Pedido,
           },
           {
-            path: '/:empresa/LeerQR',
+            path: `${rootMenu}/Principal/LeerQR`,
             component: LeerQR,
           },
         ],
       },
     ],
-  }
+  },
 ]
 
 const router = createRouter({
@@ -191,6 +193,7 @@ router.onError((error) => {
 
 router.beforeEach(async (to, _, next) => {
   const authStore = useAuthStore();
+  const empresaStore = useEmpresaStore();
 
   await getSession().then((session) => {
     authStore.setSession(session.value);

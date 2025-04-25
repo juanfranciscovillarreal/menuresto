@@ -168,23 +168,23 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
 // Components
-import Dialog from "../components/Dialog.vue";
-import ToolBar from "../components/ToolBar.vue";
-import Confirm from "../components/Confirm.vue";
-import Avatar from "../components/Avatar.vue";
+import Dialog from "@/components/Dialog.vue";
+import ToolBar from "@/components/ToolBar.vue";
+import Confirm from "@/components/Confirm.vue";
+import Avatar from "@/components/Avatar.vue";
 // Composables
-import { useErrorHandler } from "../composables/errorHandler";
-import { useCategoria } from "../composables/categorias";
-import { useItem } from "../composables/items";
-import { useMenu } from "../composables/menu";
-import { useReglas } from "../composables/reglas";
+import { useErrorHandler } from "@/composables/errorHandler";
+import { useCategoria } from "@/composables/categorias";
+import { useItem } from "@/composables/items";
+import { useMenu } from "@/composables/menu";
+import { useReglas } from "@/composables/reglas";
 // Stores
-import { useCategoriasStore } from "../stores/categorias";
-import { useItemsStore } from "../stores/items";
-import { useEmpresaStore } from "../stores/empresa";
-import { useMenuStore } from "../stores/menu";
+import { useCategoriasStore } from "@/stores/categorias";
+import { useItemsStore } from "@/stores/items";
+import { useEmpresaStore } from "@/stores/empresa";
+import { useMenuStore } from "@/stores/menu";
 // Assets
-import imgUrl from "../assets/image.png";
+import imgUrl from "@/assets/image.png";
 
 // Constants
 const listaCategorias = ref([]);

@@ -1,43 +1,45 @@
 <template>
   <v-app-bar color="primary" :absolute="false">
     <!-- Botón Menú Principal -->
-    <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"
-      v-if="route.path.includes('/Inicio') || route.path == `/${empresa}`">
-    </v-app-bar-nav-icon>
+    <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-    <v-btn v-if="route.path != `/${empresa}/Inicio` && route.path != `/${empresa}`" icon>
+    <!-- <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"
+      v-if="route.path.includes('/Inicio') || route.path == `/${empresa}`">
+    </v-app-bar-nav-icon> -->
+
+    <!-- <v-btn v-if="route.path != `/${empresa}/Inicio` && route.path != `/${empresa}`" icon>
       <v-icon @click="router.push(`/${empresa}/Inicio`)">mdi-arrow-left</v-icon>
-    </v-btn>
+    </v-btn> -->
 
     <!-- Volver -->
-    <v-btn v-if="route.path == `/${empresa}/LeerQR`" icon>
+    <!-- <v-btn v-if="route.path == `/${empresa}/LeerQR`" icon>
       <v-icon @click="router.push(`/${empresa}/Pedido`)">
         mdi-arrow-left
       </v-icon>
-    </v-btn>
+    </v-btn> -->
 
     <!-- Título App -->
+    <v-toolbar-title>{{ empresa }}</v-toolbar-title>
     <!-- <v-toolbar-title>{{ getTitulo }}</v-toolbar-title> -->
-    <v-toolbar-title></v-toolbar-title>
 
     <!-- Espacio -->
-    <v-spacer v-if="route.path == `/${empresa}/Menu`"></v-spacer>
+    <!-- <v-spacer v-if="route.path == `/${empresa}/Menu`"></v-spacer> -->
 
     <!-- Generar QR -->
-    <v-btn v-if="route.path == `/${empresa}/Pedido`" icon>
+    <!-- <v-btn v-if="route.path == `/${empresa}/Pedido`" icon>
       <v-icon @click="generarQR()">mdi-share</v-icon>
-    </v-btn>
+    </v-btn> -->
 
     <!-- Leer QR -->
-    <v-btn v-if="route.path == `/${empresa}/Pedido`" icon>
+    <!-- <v-btn v-if="route.path == `/${empresa}/Pedido`" icon>
       <v-icon @click="router.push('/LeerQR')">mdi-qrcode-scan</v-icon>
-    </v-btn>
+    </v-btn> -->
 
     <!-- Buscar -->
     <Buscar />
 
     <!-- Expandir / Contraer -->
-    <v-btn v-if="route.path == `/${empresa}/Menu`" icon>
+    <v-btn v-if="route.path.includes('/Menu')" icon>
       <v-icon @click="menuStore.expandirContraerMenu()">
         {{ menuStore.expandir.length > 0 ? 'mdi-minus-box-multiple-outline' : 'mdi-expand-all' }}
       </v-icon>
@@ -137,21 +139,23 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 //import VueQrcode from 'vue-qrcode';
 // Components
-import Buscar from '../components/Buscar.vue';
+import Buscar from '@/components/Buscar.vue';
 // Composables
 import { useErrorHandler } from '@/composables/errorHandler'
-import { useEmpresa } from '../composables/empresa';
-import { useCategoria } from '../composables/categorias';
-import { useMenu } from '../composables/menu';
+import { useEmpresa } from '@/composables/empresa';
+import { useCategoria } from '@/composables/categorias';
+import { useMenu } from '@/composables/menu';
+import { useAplicacion } from '@/composables/aplicacion';
 // Stores
-import { useCategoriasStore } from "../stores/categorias";
-import { useMenuStore } from "../stores/menu";
-import { useEmpresaStore } from "../stores/empresa";
+import { useCategoriasStore } from "@/stores/categorias";
+import { useMenuStore } from "@/stores/menu";
+import { useEmpresaStore } from "@/stores/empresa";
 
 // Composables
 const { getEmpresaPorNombre } = useEmpresa();
 const { getCategoriasPorEmpresaId } = useCategoria();
 const { getMenu } = useMenu();
+const { nombreApp } = useAplicacion();
 
 // const theme = ref('light')
 const router = useRouter()
@@ -171,6 +175,7 @@ const menuStore = useMenuStore()
 const empresaStore = useEmpresaStore()
 
 onMounted(async () => {
+  //console.log(`Empresa ${route.params.empresa}`);
   empresa.value = route.params.empresa;
   await getEmpresaPorNombreData();
   await getCategoriasPorEmpresaIdData();
@@ -183,25 +188,22 @@ async function getEmpresaPorNombreData() {
       .then((data) => {
         if (data) {
           empresaStore.empresa = data;
+          let root = `/${nombreApp.value}/${empresa.value}`;
           links.value = [
-            ["Inicio", "mdi-home", "/" + empresa.value + "/Inicio"],
-            ["Menu", "mdi-library", "/" + empresa.value + "/Menu"],
-            ["Contacto", "mdi-map-marker", "/" + empresa.value + "/Contacto"],
-            ["Reservas", "mdi-calendar-month", "/" + empresa.value + "/Reserva"],
+            ["Inicio", "mdi-home", `${root}/Inicio`],
+            ["Menu", "mdi-library", `${root}/Principal`],
+            ["Contacto", "mdi-map-marker", `${root}/Contacto`],
+            ["Reservas", "mdi-calendar-month", `${root}/Reserva`],
             ["Divider", "", ""],
-            ["Ajustes", "mdi-cog", "/" + empresa.value + "/Ajustes"],
-            ["Wi-Fi", "mdi-wifi", "/" + empresa.value + "/WiFi"],
+            ["Ajustes", "mdi-cog", `${root}/Ajustes`],
+            ["Wi-Fi", "mdi-wifi", `${root}/WiFi`],
           ]
 
           varios.value = [
-            ["Acerca de InteliCarta...", "mdi-information", `/${empresa.value}/Acerca`],
+            ["Acerca de InteliCarta...", "mdi-information", `${root}/Acerca`],
           ]
 
-          // items.value = [
-          //   { text: 'Ajustes', icon: 'mdi-cog', path: `/${empresa.value}/Ajustes` },
-          // ]
-
-          router.replace(`/${data.nombre}/Inicio`);
+          router.push(`${root}/Inicio`);
         } else {
           router.push('/');
         }

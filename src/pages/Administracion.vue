@@ -77,21 +77,21 @@ import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 // Components
-import Usuario from "../components/Usuario.vue";
+import Usuario from "@/components/Usuario.vue";
 import FloatingButtons from '@/components/FloatingButtons.vue';
 
 // Composables
-import { useAuth } from '../composables/auth';
+import { useAuth } from '@/composables/auth';
 import { useErrorHandler } from '@/composables/errorHandler'
 
 // Stores
-import { useMenuStore } from "../stores/menu";
-import { useUsuarioStore } from "../stores/usuario";
-import { useEmpresaStore } from "../stores/empresa";
-import { useAuthStore } from "../stores/auth";
+import { useMenuStore } from "@/stores/menu";
+import { useUsuarioStore } from "@/stores/usuario";
+import { useEmpresaStore } from "@/stores/empresa";
+import { useAuthStore } from "@/stores/auth";
 
 // Assets
-import imgUrl from '../assets/InteliCarta.png'
+import imgUrl from '@/assets/InteliCarta.png'
 
 const router = useRouter()
 const route = useRoute()

@@ -76,7 +76,6 @@
             </v-card>
         </v-card>
     </v-bottom-sheet>
-
 </template>
 
 <script setup>
@@ -86,9 +85,10 @@ import Categorias from '@/components/Categorias.vue';
 // Composables
 import { useFiltros } from '@/composables/filtros'
 // Stores
-import { useMenuStore } from "../stores/menu";
-import { useCategoriasStore } from "../stores/categorias";
+import { useMenuStore } from "@/stores/menu";
+import { useCategoriasStore } from "@/stores/categorias";
 
+const tabs = ref(null)
 const categoriaSeleccionada = ref(0)
 const dialog = ref(false)
 const dialogTitulo = ref('')

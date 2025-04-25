@@ -18,13 +18,17 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
+// Composables
+import { useAplicacion } from '@/composables/aplicacion';
 // Stores
-import { useEmpresaStore } from "../stores/empresa";
-import { useMenuStore } from "../stores/menu";
+import { useEmpresaStore } from "@/stores/empresa";
+import { useMenuStore } from "@/stores/menu";
 
 const router = useRouter()
 const route = useRoute()
 const value = ref(0)
+// Composables
+const { nombreApp } = useAplicacion();
 // Stores
 const empresaStore = useEmpresaStore()
 const menuStore = useMenuStore()
@@ -34,7 +38,8 @@ onMounted(() => {
 })
 
 function goTo(opcion) {
-    console.log(`Empresa: ${empresaStore.empresa.nombre}`)
-    router.push(`/${empresaStore.empresa.nombre}/${opcion}`);
+    let empresa = empresaStore.empresa.nombre;
+    let root = `/${nombreApp.value}/${empresa}/Principal`;
+    router.push(`${root}/${opcion}`);
 }
 </script>

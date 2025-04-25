@@ -41,10 +41,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { supabase } from '../lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { useRouter, useRoute } from 'vue-router'
 import { useErrorHandler } from '@/composables/errorHandler'
-import { useEmpresaStore } from "../stores/empresa";
+import { useEmpresaStore } from "@/stores/empresa";
 
 const empresaStore = useEmpresaStore()
 const router = useRouter()

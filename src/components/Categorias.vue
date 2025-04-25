@@ -23,7 +23,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
-import { useCategoriasStore } from "../stores/categorias";
+import { useCategoriasStore } from "@/stores/categorias";
 
 const categoriasStore = useCategoriasStore()
 

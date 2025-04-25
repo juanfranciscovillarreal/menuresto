@@ -68,7 +68,7 @@
 </template>
 
 <script setup>
-import { useAjustesStore } from "../stores/ajustes";
+import { useAjustesStore } from "@/stores/ajustes";
 import { ref } from 'vue'
 import { useLocale } from 'vuetify'
 

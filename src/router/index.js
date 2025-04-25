@@ -43,7 +43,7 @@ import { useAplicacion } from '@/composables/aplicacion';
 import { useAuthStore } from "@/stores/auth";
 import { useEmpresaStore } from "@/stores/empresa";
 // App Pages
-import Acerca from '@/pages/App/Acerca.vue'
+import AcercaApp from '@/pages/App/Acerca.vue'
 import Ajustes from '@/pages/App/Ajustes.vue'
 import Contacto from '@/pages/App/Contacto.vue'
 import Home from '@/pages/App/Home.vue'
@@ -55,17 +55,18 @@ import Principal from '@/pages/App/Principal.vue'
 import Reserva from '@/pages/App/Reserva.vue'
 import WiFi from '@/pages/App/WiFi.vue'
 // Admin Pages
-import Administracion from '@/pages/Administracion.vue'
-import Categoria from '@/pages/Categoria.vue'
-import Empresa from '@/pages/Empresa.vue'
-import ForgotPass from '@/pages/ForgotPass.vue'
-import Item from '@/pages/Item.vue'
-import Land from '@/pages/Land.vue'
-import Login from '@/pages/Login.vue'
-import MenuAbm from '@/pages/MenuAbm.vue'
-import NewPass from '@/pages/NewPass.vue'
-import PageNotFound from '@/pages/PageNotFound.vue'
-import SignUp from '@/pages/SignUp.vue'
+import Acerca from '@/pages/Admin/Acerca.vue'
+import Administracion from '@/pages/Admin/Administracion.vue'
+import Categoria from '@/pages/Admin/Categoria.vue'
+import Empresa from '@/pages/Admin/Empresa.vue'
+import ForgotPass from '@/pages/Admin/ForgotPass.vue'
+import Item from '@/pages/Admin/Item.vue'
+import Land from '@/pages/Admin/Land.vue'
+import Login from '@/pages/Admin/Login.vue'
+import MenuAbm from '@/pages/Admin/MenuAbm.vue'
+import NewPass from '@/pages/Admin/NewPass.vue'
+import PageNotFound from '@/pages/Admin/PageNotFound.vue'
+import SignUp from '@/pages/Admin/SignUp.vue'
 
 // Composables
 const { nombreApp } = useAplicacion();
@@ -129,6 +130,10 @@ const routes = [
     name: 'MenuAbm',
     component: MenuAbm,
   },
+  {
+    path: '/acerca',
+    component: Acerca,
+  },
   // App
   {
     path: rootMenu,
@@ -152,7 +157,7 @@ const routes = [
       },
       {
         path: `${rootMenu}/Acerca`,
-        component: Acerca,
+        component: AcercaApp,
       },
       {
         path: `${rootMenu}/Reserva`,

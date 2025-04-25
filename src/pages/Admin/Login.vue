@@ -138,15 +138,15 @@ async function getEmpresaData() {
 }
 
 async function getCategoriasData() {
-    categoriasStore.categorias = await getCategorias();
+    categoriasStore.categorias = await getCategorias(empresaStore.empresa.id);
 }
 
 async function getItemsData() {
-    itemsStore.items = await getItems();
+    itemsStore.items = await getItems(empresaStore.empresa.id);
 }
 
 async function getMenuData() {
-    menuStore.menu = await getMenu();
+    menuStore.menu = await getMenu(empresaStore.empresa.id);
 }
 
 async function signOutSession() {

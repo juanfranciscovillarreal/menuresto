@@ -36,8 +36,13 @@ export function useItem() {
     if (response.error) throw response.error;
   }
 
-  async function getItems() {
-    let { data, error, status } = await supabase.from('Item').select().order('nombre', { ascending: true });
+  async function getItems(id) {
+    let { data, error, status } = await supabase
+    .from('Item')
+    .select('id, nombre, descripcion, id_categoria, precio, foto')
+    .eq('user_id', id)
+    .order('nombre', { ascending: true });
+
     if (error) throw error;
     return data;
   }

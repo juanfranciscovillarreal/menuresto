@@ -153,7 +153,7 @@ import { useEmpresaStore } from "@/stores/empresa";
 
 // Composables
 const { getEmpresaPorNombre } = useEmpresa();
-const { getCategoriasPorEmpresaId } = useCategoria();
+const { getCategorias } = useCategoria();
 const { getMenu } = useMenu();
 const { nombreApp } = useAplicacion();
 
@@ -178,7 +178,7 @@ onMounted(async () => {
   //console.log(`Empresa ${route.params.empresa}`);
   empresa.value = route.params.empresa;
   await getEmpresaPorNombreData();
-  await getCategoriasPorEmpresaIdData();
+  await getCategoriasData();
   await getMenuData();
 })
 
@@ -215,10 +215,10 @@ async function getEmpresaPorNombreData() {
   }
 }
 
-async function getCategoriasPorEmpresaIdData() {
+async function getCategoriasData() {
   // TODO: ver si se puede usar una vista parametrizada o procedimiento almacenado
   //       en lugar de consultar directamente la tabla
-  await getCategoriasPorEmpresaId(empresaStore.empresa.id)
+  await getCategorias(empresaStore.empresa.id)
     .then((data) => {
       data.unshift({
         id: 0,

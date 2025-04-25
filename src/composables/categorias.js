@@ -36,22 +36,16 @@ export function useCategoria() {
     if (response.error) throw response.error;
   }
 
-  async function getCategorias() {
-    let { data, error, status } = await supabase.from('Categoria').select().order('nombre', { ascending: true });
-    if (error) throw error;
-    return data;
-  }
-
-  async function getCategoriasPorEmpresaId(id) {
-    const { data, error, status } = await supabase
-      .from('Categoria')
-      .select('id, nombre')
-      .eq('user_id', id)
-      .order('nombre', { ascending: true });
+  async function getCategorias(id) {
+    let { data, error, status } = await supabase
+    .from('Categoria')
+    .select('id, nombre')
+    .eq('user_id', id)
+    .order('nombre', { ascending: true });
 
     if (error) throw error;
     return data;
   }
 
-  return { getCategorias, updateCategoria, insertCategoria, removeCategoria, getCategoriasPorEmpresaId };
+  return { getCategorias, updateCategoria, insertCategoria, removeCategoria };
 }

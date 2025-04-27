@@ -5,19 +5,19 @@
         <!-- Tema -->
         <v-list-item>
             <v-list-item-title>
-                Tema del Menú
+                Tema
             </v-list-item-title>
 
             <v-list-item-subtitle>
-                Seleccione entre un modo claro o uno oscuro
+                Modo claro / oscuro
             </v-list-item-subtitle>
 
             <template v-slot:prepend>
-                <v-icon :icon="ajustesStore.modo === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"></v-icon>
+                <v-icon :icon="modo === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night'"></v-icon>
             </template>
 
             <template v-slot:append>
-                <v-switch v-model="ajustesStore.modo" color="primary" false-value="light" true-value="dark"
+                <v-switch v-model="modo" color="primary" false-value="light" true-value="dark"
                     hide-details>
                 </v-switch>
             </template>
@@ -26,7 +26,7 @@
         <!-- Idioma -->
         <v-list-item>
             <v-list-item-title>
-                Idioma del Menú
+                Idioma
             </v-list-item-title>
 
             <v-list-item-subtitle>
@@ -69,26 +69,25 @@
 
 <script setup>
 import { useAjustesStore } from "@/stores/ajustes";
-import { ref } from 'vue'
-import { useLocale } from 'vuetify'
+import { ref, watch, onMounted } from 'vue'
+import { useLocale, useTheme } from 'vuetify'
 
 const { current } = useLocale()
-
+const theme = useTheme()
 const ajustesStore = useAjustesStore()
-const settingsItems = ref([
-    { value: 'modo', title: 'Modo', subtitle: 'Seleccione entre un modo claro / oscuro' },
-    { value: 'idioma', title: 'Idioma', subtitle: 'Español' },
-    { value: 'ayuda', title: 'Ayuda', subtitle: 'Ayuda sobre el menú' },
-])
-
 const settingsSelection = ref([])
-
 const idioma = ref('Español')
 const dialog = ref(false)
+const modo = ref('light')
 
-function onClick() {
-    ajustesStore.modo = ajustesStore.modo === 'light' ? 'dark' : 'light'
-}
+onMounted(() => {
+ modo.value = ajustesStore.modo;
+})
+
+watch(modo, (newValue, oldValue) => {
+    ajustesStore.modo = newValue;
+    theme.global.name.value = newValue;
+})
 
 function verIdiomas() {
     dialog.value = true;
@@ -98,10 +97,6 @@ function seleccionarIdioma() {
     //idioma.value = idioma.value.charAt(0).toUpperCase() + idioma.value.slice(1)
     console.log(idioma.value);
     dialog.value = false;
-}
-
-function changeLocale(locale) {
-    current.value = locale
 }
 
 </script>

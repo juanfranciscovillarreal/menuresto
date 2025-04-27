@@ -23,8 +23,8 @@
   </div>
 
   <div class="d-flex align-center justify-space-around">
-    <v-list>
-      <v-list-item v-for="(horario, i) in horarios" :key="i">
+    <v-list elevation="0" variant="text">
+      <v-list-item v-for="(horario, i) in horarios" :key="i" >
         <v-list-item-title v-text="horario.dia" class="mr-4"></v-list-item-title>
 
         <template v-slot:append>

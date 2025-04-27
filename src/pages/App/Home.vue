@@ -22,6 +22,9 @@
     <v-toolbar-title>{{ empresa }}</v-toolbar-title>
     <!-- <v-toolbar-title>{{ getTitulo }}</v-toolbar-title> -->
 
+    <!-- Tema -->
+     <BtnTheme v-if="route.path.includes('/Inicio')"/>
+
     <!-- Espacio -->
     <!-- <v-spacer v-if="route.path == `/${empresa}/Menu`"></v-spacer> -->
 
@@ -137,8 +140,10 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+
 //import VueQrcode from 'vue-qrcode';
 // Components
+import BtnTheme from '@/components/BtnTheme.vue';
 import Buscar from '@/components/Buscar.vue';
 // Composables
 import { useErrorHandler } from '@/composables/errorHandler'
@@ -146,6 +151,7 @@ import { useEmpresa } from '@/composables/empresa';
 import { useCategoria } from '@/composables/categorias';
 import { useMenu } from '@/composables/menu';
 import { useAplicacion } from '@/composables/aplicacion';
+import { useTheme } from 'vuetify'
 // Stores
 import { useCategoriasStore } from "@/stores/categorias";
 import { useMenuStore } from "@/stores/menu";
@@ -156,11 +162,8 @@ const { getEmpresaPorNombre } = useEmpresa();
 const { getCategorias } = useCategoria();
 const { getMenu } = useMenu();
 const { nombreApp } = useAplicacion();
-
-// const theme = ref('light')
 const router = useRouter()
 const route = useRoute()
-
 const verQR = ref(false)
 const qrValue = ref('')
 const drawer = ref(false)
@@ -175,7 +178,6 @@ const menuStore = useMenuStore()
 const empresaStore = useEmpresaStore()
 
 onMounted(async () => {
-  //console.log(`Empresa ${route.params.empresa}`);
   empresa.value = route.params.empresa;
   await getEmpresaPorNombreData();
   await getCategoriasData();
@@ -290,10 +292,6 @@ const getTitulo = computed(() => {
   }
   return titulo;
 })
-
-function onClick() {
-  theme.value = theme.value === 'light' ? 'dark' : 'light'
-}
 
 function generarQR() {
   qrValue.value = JSON.stringify(menuStore.pedido.map(({ id, cantidad }) => ({ id, cantidad })));

@@ -1,7 +1,7 @@
 <template>
     <ToolBar titulo="Registrar cuenta" ruta="/Login"></ToolBar>
 
-    <v-card class="mx-auto pa-6 mt-2" elevation="0" rounded="0" max-width="448" min-width="360">
+    <v-card class="mx-auto pa-6 mt-2" elevation="0" rounded="0" variant="text" max-width="448" min-width="360">
         <v-form v-model="form" @submit.prevent="onSubmit">
             <div class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between">
                 Correo

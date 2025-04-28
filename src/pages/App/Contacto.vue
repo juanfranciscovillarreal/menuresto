@@ -37,20 +37,27 @@
   <v-card elevation="0" rounded="0" class="position-absolute bottom-0 w-100" theme="dark">
     <v-container >
       <v-row justify="center" dense>
-        <v-col v-for="(shortcut, i) in contactos" :key="i" cols="auto">
-          <v-card :href="shortcut.href" class="pa-2" rel="noopener noreferer" target="_blank" width="50" flat>
-            <v-avatar :icon="shortcut.icon" class="mb-2" color="white" variant="tonal"></v-avatar>
+        <v-col v-for="(contacto, i) in contactoStore.contactos" :key="i" cols="auto">
+          <v-card :href="contacto.href" class="pa-2" rel="noopener noreferer" target="_blank" width="50" flat>
+            <v-avatar :icon="contacto.Social.icono" class="mb-2" color="white" variant="tonal"></v-avatar>
           </v-card>
         </v-col>
       </v-row>
     </v-container>
   </v-card>
 
-
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, watch, computed } from 'vue'
+import { useContactoStore } from "@/stores/contacto";
+
+const contactoStore = useContactoStore()
+
+onMounted(async () => {
+  console.log(`Data: ${JSON.stringify(contactoStore.contactos)}`)
+})
+
 
 const horarios = ref([
   { dia: 'Lunes', horario: '19:00 a 01:00' },
@@ -60,32 +67,5 @@ const horarios = ref([
   { dia: 'Viernes', horario: '19:00 a 01:00' },
 ])
 
-const contactos = ref([
-  {
-    icon: 'mdi-web',
-    title: 'www.suss.com.ar',
-    href: 'www.suss.com.ar',
-  },
-  {
-    icon: 'mdi-instagram',
-    title: 'Instagram',
-    href: '@suss.com.ar',
-  },
-  {
-    icon: 'mdi-facebook',
-    title: 'Facebook',
-    href: 'https://facebook.com/suss',
-  },
-  {
-    icon: 'mdi-whatsapp',
-    title: 'Whatsapp',
-    href: '01160591399',
-  },
-  {
-    icon: 'mdi-mail',
-    title: 'Correo',
-    href: 'mailTo:',
-  },
-])
 
 </script>

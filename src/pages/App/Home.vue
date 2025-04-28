@@ -151,17 +151,20 @@ import { useEmpresa } from '@/composables/empresa';
 import { useCategoria } from '@/composables/categorias';
 import { useMenu } from '@/composables/menu';
 import { useAplicacion } from '@/composables/aplicacion';
-import { useTheme } from 'vuetify'
+import { useContacto } from '@/composables/contacto';
 // Stores
 import { useCategoriasStore } from "@/stores/categorias";
 import { useMenuStore } from "@/stores/menu";
 import { useEmpresaStore } from "@/stores/empresa";
+import { useContactoStore } from "@/stores/contacto";
 
 // Composables
 const { getEmpresaPorNombre } = useEmpresa();
 const { getCategorias } = useCategoria();
 const { getMenu } = useMenu();
+const { getContacto } = useContacto();
 const { nombreApp } = useAplicacion();
+
 const router = useRouter()
 const route = useRoute()
 const verQR = ref(false)
@@ -170,16 +173,17 @@ const drawer = ref(false)
 const empresa = ref('')
 const links = ref([])
 const varios = ref([])
-const items = ref([])
 
 // Stores
 const categoriasStore = useCategoriasStore()
 const menuStore = useMenuStore()
 const empresaStore = useEmpresaStore()
+const contactoStore = useContactoStore()
 
 onMounted(async () => {
   empresa.value = route.params.empresa;
   await getEmpresaPorNombreData();
+  await getContactoData();
   await getCategoriasData();
   await getMenuData();
 })
@@ -237,6 +241,13 @@ async function getMenuData() {
         // Cargo el menú completo si no hay un pedido hecho
         menuStore.menuCompleto = data;
       }
+    });
+}
+
+async function getContactoData() {
+  await getContacto(empresaStore.empresa.id)
+    .then((data) => {
+      contactoStore.contactos = data;
     });
 }
 

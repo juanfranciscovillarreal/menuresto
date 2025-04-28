@@ -1,5 +1,5 @@
 // Stackblitz
-/*
+
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath, URL } from 'node:url';
@@ -14,9 +14,9 @@ export default defineConfig({
     extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
   },
 });
-*/
 
 
+/*
 // Plugins
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
@@ -93,3 +93,4 @@ export default defineConfig({
     },
   },
 })
+*/

@@ -152,17 +152,20 @@ import { useCategoria } from '@/composables/categorias';
 import { useMenu } from '@/composables/menu';
 import { useAplicacion } from '@/composables/aplicacion';
 import { useContacto } from '@/composables/contacto';
+import { useHorario } from '@/composables/horario';
 // Stores
 import { useCategoriasStore } from "@/stores/categorias";
 import { useMenuStore } from "@/stores/menu";
 import { useEmpresaStore } from "@/stores/empresa";
 import { useContactoStore } from "@/stores/contacto";
+import { useHorarioStore } from "@/stores/horario";
 
 // Composables
 const { getEmpresaPorNombre } = useEmpresa();
 const { getCategorias } = useCategoria();
 const { getMenu } = useMenu();
 const { getContacto } = useContacto();
+const { getHorario } = useHorario();
 const { nombreApp } = useAplicacion();
 
 const router = useRouter()
@@ -179,11 +182,13 @@ const categoriasStore = useCategoriasStore()
 const menuStore = useMenuStore()
 const empresaStore = useEmpresaStore()
 const contactoStore = useContactoStore()
+const horarioStore = useHorarioStore()
 
 onMounted(async () => {
   empresa.value = route.params.empresa;
   await getEmpresaPorNombreData();
   await getContactoData();
+  await getHorarioData();
   await getCategoriasData();
   await getMenuData();
 })
@@ -248,6 +253,13 @@ async function getContactoData() {
   await getContacto(empresaStore.empresa.id)
     .then((data) => {
       contactoStore.contactos = data;
+    });
+}
+
+async function getHorarioData() {
+  await getHorario(empresaStore.empresa.id)
+    .then((data) => {
+      horarioStore.horarios = data;
     });
 }
 

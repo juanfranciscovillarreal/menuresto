@@ -35,7 +35,7 @@
 
 // export default router
 
-import { createMemoryHistory, createWebHistory, createRouter } from 'vue-router'
+import { createMemoryHistory, createWebHistory, createWebHashHistory, createRouter } from 'vue-router'
 // Composables
 import { useAuth } from '@/composables/auth';
 import { useAplicacion } from '@/composables/aplicacion';
@@ -187,8 +187,8 @@ const routes = [
 ]
 
 const router = createRouter({
-  // history: createMemoryHistory(),
-  history: createWebHistory(),
+  history: process.env.NODE_ENV === 'production' ? createWebHashHistory() : createWebHistory(),
+  //history: createWebHistory(),
   routes,
 })
 

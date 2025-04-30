@@ -205,6 +205,8 @@ async function getEmpresaPorNombreData() {
             ["Menu", "mdi-library", `${root}/Principal`],
             ["Contacto", "mdi-map-marker", `${root}/Contacto`],
             ["Reservas", "mdi-calendar-month", `${root}/Reserva`],
+            ["Galería", "mdi-photo", `${root}/Galeria`],
+            ["Delivery", "mdi-photo", `${root}/Delivery`],
             ["Divider", "", ""],
             ["Ajustes", "mdi-cog", `${root}/Ajustes`],
             ["Wi-Fi", "mdi-wifi", `${root}/WiFi`],

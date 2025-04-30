@@ -1,4 +1,4 @@
-
+/*
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
@@ -21,6 +21,7 @@ const vuetify = createVuetify({
 const pinia = createPinia();
 
 createApp(App).use(vuetify).use(pinia).use(createRouter).mount('#app');
+*/
 
 /**
  * main.js
@@ -28,7 +29,7 @@ createApp(App).use(vuetify).use(pinia).use(createRouter).mount('#app');
  * Bootstraps Vuetify and other plugins then mounts the App`
  */
 
-/*
+
 // Plugins
 import { registerPlugins } from '../src/plugins'
 
@@ -49,4 +50,3 @@ app.config.globalProperties.$filters = {
 registerPlugins(app)
 
 app.mount('#app')
-*/

@@ -21,16 +21,14 @@
         <!-- Fotos -->
         <v-container>
             <v-row>
-                <v-col v-for="foto in fotos" :key="foto" class="d-flex child-flex" cols="6">
+                <v-col v-for="galeria in galeriaStore.fotos" :key="galeria.id" class="d-flex child-flex" cols="6">
 
-                    <v-img :src="foto" aspect-ratio="1" class="bg-grey-lighten-2" cover>
+                    <v-img :src="galeria.foto" aspect-ratio="1" class="bg-grey-lighten-2" cover>
 
                         <div class="position-absolute bottom-0 right-0 pa-2">
-                            <v-btn icon="mdi-magnify" size="small" color="white"
-                                @click="verFoto(foto)"></v-btn>
+                            <v-btn icon="mdi-magnify" size="small" color="white" @click="verFoto(galeria.foto)"></v-btn>
 
-                            <v-btn icon="mdi-delete" size="small" color="red"
-                                @click="console.log('Borrar')"></v-btn>
+                            <v-btn icon="mdi-delete" size="small" color="red" @click="borrarFoto(galeria)"></v-btn>
                         </div>
 
                         <template v-slot:placeholder>
@@ -55,80 +53,83 @@
             </v-row>
         </v-container>
 
-        <!-- <v-container fluid>
-            <v-row dense>
-                <v-col v-for="foto in fotos" :key="foto" :cols="6">
-                    <v-card>
-                        <v-img :src="foto" aspect-ratio="1" class="bg-grey-lighten-2" cover @click="verFoto(foto)">
-                            <v-btn color="medium-emphasis" icon="mdi-delete" size="small"></v-btn>
-                            <template v-slot:placeholder>
-                                <v-container class="fill-height" fluid>
-                                    <v-row justify="center">
-                                        <v-col cols="12">
-                                            <div class="text-center">
-                                                <v-progress-circular color="grey-lighten-5"
-                                                    indeterminate></v-progress-circular>
-                                            </div>
-                                        </v-col>
-                                    </v-row>
-                                </v-container>
-                            </template>
-
-                            <template v-slot:error>
-                                <v-img cover aspect-ratio="1" src="https://picsum.photos/500/300?image=232">
-                                </v-img>
-                            </template>
-                        </v-img>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="medium-emphasis" icon="mdi-delete" size="small"></v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-col>
-            </v-row>
-        </v-container> -->
-
-        <!-- Dialog -->
+        <!-- Dialog Ver Foto -->
         <div class="text-center pa-4">
-            <v-dialog v-model="dialog" max-width="500">
+            <v-dialog v-model="dialogVerFoto" max-width="500">
                 <v-img cover aspect-ratio="1" :src="fotoSeleccionada"></v-img>
             </v-dialog>
         </div>
     </v-card>
+
+    <Dialog :show="dialogShow" :titulo="dialogTitulo" :mensaje="dialogMensaje" @dialogCerrar="dialogShow = false">
+    </Dialog>
+
 </template>
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
+// Components
+import Dialog from '@/components/Dialog.vue';
+// Composables
+import { useErrorHandler } from '@/composables/errorHandler';
+import { useGaleria } from '@/composables/galeria';
+// Stores
+import { useGaleriaStore } from "@/stores/galeria";
+
 const router = useRouter()
 const route = useRoute()
 
-const dialog = ref(false)
+const dialogVerFoto = ref(false)
+const dialogShow = ref(false);
+const dialogMensaje = ref('');
+const dialogTitulo = ref('');
 const fotoSeleccionada = ref('')
-const foto = ref('')
-const image = ref('');
-
-const fotos = ref([
-    'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-    'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-])
+// Composables
+const { insertFoto, removeFoto } = useGaleria();
+// Stores
+const galeriaStore = useGaleriaStore()
 
 function verFoto(foto) {
     fotoSeleccionada.value = foto;
-    dialog.value = true;
+    dialogVerFoto.value = true;
+}
+
+async function borrarFoto(foto) {
+    try {
+        await removeFoto(foto.id);
+        let itemIndex = galeriaStore.fotos.indexOf(foto);
+        galeriaStore.fotos.splice(itemIndex, 1);
+    } catch (error) {
+        dialogTitulo.value = 'Error';
+        dialogShow.value = true;
+        dialogMensaje.value = useErrorHandler(error);
+    }
 }
 
 function onFilePicked(event) {
+
     const files = event.target.files;
     let filename = files[0].name;
     const fileReader = new FileReader();
-    fileReader.addEventListener('load', () => {
-        // foto.value = fileReader.result;
-        fotos.value.push(fileReader.result);
+
+    fileReader.addEventListener('load', async () => {
+        let foto = fileReader.result;
+        let newFoto = {
+            foto: foto,
+        };
+
+        try {
+            await insertFoto(newFoto);
+            galeriaStore.fotos.push(newFoto);
+        } catch (error) {
+            dialogTitulo.value = 'Error';
+            dialogShow.value = true;
+            dialogMensaje.value = useErrorHandler(error);
+        }
     });
     fileReader.readAsDataURL(files[0]);
-    // image.value = files[0];
 }
 
 </script>

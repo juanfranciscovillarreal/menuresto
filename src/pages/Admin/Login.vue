@@ -65,8 +65,10 @@ import { useItem } from '@/composables/items';
 import { useMenu } from '@/composables/menu';
 import { useReglas } from "@/composables/reglas";
 import { useAuth } from '@/composables/auth';
+import { useGaleria } from '@/composables/galeria';
 // Stores
 import { useCategoriasStore } from "@/stores/categorias";
+import { useGaleriaStore } from "@/stores/galeria";
 import { useItemsStore } from "@/stores/items";
 import { useUsuarioStore } from "@/stores/usuario";
 import { useMenuStore } from "@/stores/menu";
@@ -87,10 +89,12 @@ const { getEmpresa } = useEmpresa();
 const { getCategorias } = useCategoria();
 const { getItems } = useItem();
 const { getMenu } = useMenu();
+const { getFotos } = useGaleria();
 const { rules } = useReglas();
 const { signIn, signOut } = useAuth();
 // Stores
 const categoriasStore = useCategoriasStore()
+const galeriaStore = useGaleriaStore()
 const itemsStore = useItemsStore()
 const usuarioStore = useUsuarioStore()
 const empresaStore = useEmpresaStore()
@@ -109,6 +113,7 @@ async function onSubmit() {
         await signInWithEmail();
         await getEmpresaData();
         await getCategoriasData();
+        await getGaleriaData();
         await getItemsData();
         await getMenuData();
         router.push('/Administracion');
@@ -157,6 +162,10 @@ async function getItemsData() {
 
 async function getMenuData() {
     menuStore.menu = await getMenu(empresaStore.empresa.id);
+}
+
+async function getGaleriaData() {
+    galeriaStore.fotos = await getFotos(empresaStore.empresa.id);
 }
 
 async function signOutSession() {

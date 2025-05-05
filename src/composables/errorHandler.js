@@ -36,7 +36,7 @@ export function useErrorHandler(error) {
       23514
 
     case '42501': // new row violates row-level security policy for table ...'
-      message.value = 'Debe iniciar sesión';
+      message.value = 'No posee permisos suficientes';
       break;
 
     default:

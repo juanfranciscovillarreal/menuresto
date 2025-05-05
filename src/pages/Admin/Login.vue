@@ -40,6 +40,11 @@
 
     <Dialog :show="dialogShow" :titulo="dialogTitulo" :mensaje="dialogMensaje" @dialogCerrar="dialogShow = false">
     </Dialog>
+
+    <v-overlay persistent disabled :model-value="showOverlay" class="align-center justify-center">
+        <v-progress-circular color="primary" size="48" indeterminate></v-progress-circular>
+    </v-overlay>
+
 </template>
 
 <script setup>
@@ -76,6 +81,7 @@ const visible = ref(false);
 const dialogShow = ref(false);
 const dialogTitulo = ref('Inicio de sesión');
 const dialogMensaje = ref('');
+const showOverlay = ref(false)
 // Composables
 const { getEmpresa } = useEmpresa();
 const { getCategorias } = useCategoria();
@@ -99,14 +105,19 @@ async function onSubmit() {
     if (!form.value) return;
 
     try {
+        showOverlay.value = true;
         await signInWithEmail();
         await getEmpresaData();
         await getCategoriasData();
         await getItemsData();
         await getMenuData();
+        router.push('/Administracion');
     } catch (error) {
         dialogShow.value = true;
         dialogMensaje.value = useErrorHandler(error);
+    }
+    finally {
+        showOverlay.value = false;
     }
 }
 
@@ -116,7 +127,6 @@ async function signInWithEmail() {
             .then((data) => {
                 empresaStore.empresa.id = data.user.id;
                 usuarioStore.email = email.value;
-                router.push('/Administracion');
             });
 
     } catch (error) {

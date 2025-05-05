@@ -20,7 +20,6 @@ export const useAuthStore = defineStore("auth", () => {
     }
 
     function setSession(newSession) {
-        console.log("setSession", newSession);
         session.value = newSession;
     }
 

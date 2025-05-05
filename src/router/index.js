@@ -54,12 +54,14 @@ import Pedido from '@/pages/App/Pedido.vue'
 import Principal from '@/pages/App/Principal.vue'
 import Reserva from '@/pages/App/Reserva.vue'
 import WiFi from '@/pages/App/WiFi.vue'
+import Galeria from '@/pages/App/Galeria.vue'
 // Admin Pages
 import Acerca from '@/pages/Admin/Acerca.vue'
 import Administracion from '@/pages/Admin/Administracion.vue'
 import Categoria from '@/pages/Admin/Categoria.vue'
 import Empresa from '@/pages/Admin/Empresa.vue'
 import ForgotPass from '@/pages/Admin/ForgotPass.vue'
+import GaleriaAbm from '@/pages/Admin/GaleriaAbm.vue'
 import Item from '@/pages/Admin/Item.vue'
 import Land from '@/pages/Admin/Land.vue'
 import Login from '@/pages/Admin/Login.vue'
@@ -131,6 +133,10 @@ const routes = [
     component: MenuAbm,
   },
   {
+    path: '/galeriaabm',
+    component: GaleriaAbm,
+  },
+  {
     path: '/acerca',
     component: Acerca,
   },
@@ -150,6 +156,10 @@ const routes = [
       {
         path: `${rootMenu}/Contacto`,
         component: Contacto,
+      },
+      {
+        path: `${rootMenu}/Galeria`,
+        component: Galeria,
       },
       {
         path: `${rootMenu}/Ajustes`,

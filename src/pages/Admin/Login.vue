@@ -59,7 +59,6 @@ import Dialog from '@/components/Dialog.vue';
 // Composables
 import { useErrorHandler } from '@/composables/errorHandler'
 import { useEmpresa } from '@/composables/empresa';
-import { useEmpresaStore } from "@/stores/empresa";
 import { useCategoria } from '@/composables/categorias';
 import { useItem } from '@/composables/items';
 import { useMenu } from '@/composables/menu';
@@ -67,6 +66,7 @@ import { useReglas } from "@/composables/reglas";
 import { useAuth } from '@/composables/auth';
 import { useGaleria } from '@/composables/galeria';
 // Stores
+import { useEmpresaStore } from "@/stores/empresa";
 import { useCategoriasStore } from "@/stores/categorias";
 import { useGaleriaStore } from "@/stores/galeria";
 import { useItemsStore } from "@/stores/items";

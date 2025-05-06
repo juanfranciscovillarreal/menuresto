@@ -74,8 +74,10 @@ import { useRouter, useRoute } from 'vue-router'
 import Dialog from '@/components/Dialog.vue';
 // Composables
 import { useErrorHandler } from '@/composables/errorHandler';
+
 import { useGaleria } from '@/composables/galeria';
 // Stores
+import { useEmpresaStore } from "@/stores/empresa";
 import { useGaleriaStore } from "@/stores/galeria";
 
 const router = useRouter()
@@ -87,8 +89,9 @@ const dialogMensaje = ref('');
 const dialogTitulo = ref('');
 const fotoSeleccionada = ref('')
 // Composables
-const { insertFoto, removeFoto } = useGaleria();
+const { getFotos, insertFoto, removeFoto } = useGaleria();
 // Stores
+const empresaStore = useEmpresaStore()
 const galeriaStore = useGaleriaStore()
 
 function verFoto(foto) {
@@ -109,7 +112,6 @@ async function borrarFoto(foto) {
 }
 
 function onFilePicked(event) {
-
     const files = event.target.files;
     let filename = files[0].name;
     const fileReader = new FileReader();
@@ -122,7 +124,7 @@ function onFilePicked(event) {
 
         try {
             await insertFoto(newFoto);
-            galeriaStore.fotos.push(newFoto);
+            await getGaleriaData();
         } catch (error) {
             dialogTitulo.value = 'Error';
             dialogShow.value = true;
@@ -130,6 +132,10 @@ function onFilePicked(event) {
         }
     });
     fileReader.readAsDataURL(files[0]);
+}
+
+async function getGaleriaData() {
+    galeriaStore.fotos = await getFotos(empresaStore.empresa.id);
 }
 
 </script>

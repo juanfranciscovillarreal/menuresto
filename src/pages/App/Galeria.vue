@@ -2,9 +2,9 @@
     <!-- Fotos -->
     <v-container>
         <v-row>
-            <v-col v-for="foto in fotos" :key="foto" class="d-flex child-flex" cols="6">
-                <v-img :src="foto" aspect-ratio="1"
-                    class="bg-grey-lighten-2" cover @click="verFoto(foto.src)">
+            <v-col v-for="galeria in galeriaStore.fotos" :key="galeria.id" class="d-flex child-flex" cols="6">
+                <v-img :src="galeria.foto" aspect-ratio="1"
+                    class="bg-grey-lighten-2" cover @click="verFoto(galeria.foto)">
 
                     <template v-slot:placeholder>
                         <v-container class="fill-height" fluid>
@@ -38,46 +38,13 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
+// Stores
+import { useGaleriaStore } from "@/stores/galeria";
+// Stores
+const galeriaStore = useGaleriaStore()
+
 const dialog = ref(false)
 const fotoSeleccionada = ref('https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg')
-const fotos = ref([
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-    },
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-    },
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg',
-    },
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
-    },
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-    },
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-    },
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg',
-    },
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
-    },
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-    },
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-    },
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg',
-    },
-    {
-        src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg',
-    },
-])
 
 function verFoto(foto){
     fotoSeleccionada.value = foto;

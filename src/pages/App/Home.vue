@@ -153,12 +153,14 @@ import { useMenu } from '@/composables/menu';
 import { useAplicacion } from '@/composables/aplicacion';
 import { useContacto } from '@/composables/contacto';
 import { useHorario } from '@/composables/horario';
+import { useGaleria } from '@/composables/galeria';
 // Stores
 import { useCategoriasStore } from "@/stores/categorias";
 import { useMenuStore } from "@/stores/menu";
 import { useEmpresaStore } from "@/stores/empresa";
 import { useContactoStore } from "@/stores/contacto";
 import { useHorarioStore } from "@/stores/horario";
+import { useGaleriaStore } from "@/stores/galeria";
 
 // Composables
 const { getEmpresaPorNombre } = useEmpresa();
@@ -167,6 +169,7 @@ const { getMenu } = useMenu();
 const { getContacto } = useContacto();
 const { getHorario } = useHorario();
 const { nombreApp } = useAplicacion();
+const { getFotos } = useGaleria();
 
 const router = useRouter()
 const route = useRoute()
@@ -183,6 +186,7 @@ const menuStore = useMenuStore()
 const empresaStore = useEmpresaStore()
 const contactoStore = useContactoStore()
 const horarioStore = useHorarioStore()
+const galeriaStore = useGaleriaStore()
 
 onMounted(async () => {
   empresa.value = route.params.empresa;
@@ -190,6 +194,7 @@ onMounted(async () => {
   await getContactoData();
   await getHorarioData();
   await getCategoriasData();
+  await getGaleriaData();
   await getMenuData();
 })
 
@@ -263,6 +268,10 @@ async function getHorarioData() {
     .then((data) => {
       horarioStore.horarios = data;
     });
+}
+
+async function getGaleriaData() {
+    galeriaStore.fotos = await getFotos(empresaStore.empresa.id);
 }
 
 watch(drawer, (newValue, oldValue) => {

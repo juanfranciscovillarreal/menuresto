@@ -68,8 +68,8 @@
 
               <!-- precio -->
               <v-col cols="12" md="4">
-                <v-text-field v-model="recordItem.precio" :rules="[rules.decimal]" label="Precio"
-                  variant="underlined" clearable prepend-icon="mdi-currency-usd">
+                <v-text-field v-model="recordItem.precio" :rules="[rules.decimal]" label="Precio" variant="underlined"
+                  clearable prepend-icon="mdi-currency-usd">
                 </v-text-field>
               </v-col>
             </v-row>
@@ -102,6 +102,11 @@
   <Confirm :show="confirmarShow" :titulo="confirmarTitulo" :mensaje="confirmarMensaje"
     @confirmarCerrar="confirmarShow = false" @confirmarAceptar="confirmarAceptar">
   </Confirm>
+
+  <v-overlay persistent disabled :model-value="showOverlay" class="align-center justify-center">
+    <v-progress-circular color="primary" size="48" indeterminate></v-progress-circular>
+  </v-overlay>
+
 </template>
 
 <script setup>
@@ -116,7 +121,9 @@ import { useErrorHandler } from '@/composables/errorHandler';
 import { useCategoria } from '@/composables/categorias';
 import { useItem } from '@/composables/items';
 import { useReglas } from "@/composables/reglas";
+import { useMenu } from "@/composables/menu";
 // Stores
+import { useEmpresaStore } from "@/stores/empresa";
 import { useCategoriasStore } from "@/stores/categorias";
 import { useItemsStore } from "@/stores/items";
 // Assets
@@ -132,6 +139,7 @@ const precio = ref();
 const imageUrl = ref('');
 const image = ref('');
 const preview = ref('https://cdn.vuetifyjs.com/images/parallax/material.jpg');
+const showOverlay = ref(false)
 
 const filter = ref('');
 const listaItems = ref([]);
@@ -165,8 +173,10 @@ const confirmarMensaje = ref('');
 const { getCategorias } = useCategoria();
 const { getItems, updateItem, insertItem, removeItem } = useItem();
 const { rules } = useReglas();
+const { getMenu } = useMenu();
 
 // Stores
+const empresaStore = useEmpresaStore()
 const categoriasStore = useCategoriasStore()
 const itemsStore = useItemsStore()
 
@@ -219,8 +229,11 @@ async function remove(item) {
 
 async function confirmarAceptar() {
   confirmarShow.value = false;
+  showOverlay.value = true;
   await removeItem(recordItem.value.id);
-  itemsStore.items = await getItems();
+  itemsStore.items = await getItems(empresaStore.empresa.id);
+  menuStore.menu = await getMenu();
+  showOverlay.value = false;
 }
 
 function addItem() {
@@ -242,10 +255,17 @@ async function onSubmitItem() {
   if (!formItem.value) return;
 
   try {
-    await saveItem();
+    showOverlay.value = true;
+    await saveItem();    
+    itemsStore.items = await getItems(empresaStore.empresa.id);
+    menuStore.menu = await getMenu();
+    showOverlay.value = false;
   } catch (error) {
     dialogShow.value = true;
     dialogMensaje.value = useErrorHandler(error);
+  }
+  finally{
+    showOverlay.value = false;
   }
 }
 
@@ -263,7 +283,6 @@ async function saveItem() {
       };
       await insertItem(newitem);
     }
-    itemsStore.items = await getItems();
     dialogItem.value = false;
   } catch (error) {
     dialogItem.value = false;

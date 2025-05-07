@@ -163,6 +163,11 @@
   <Confirm :show="confirmarShow" :titulo="confirmarTitulo" :mensaje="confirmarMensaje"
     @confirmarCerrar="confirmarShow = false" @confirmarAceptar="confirmarAceptar">
   </Confirm>
+
+  <v-overlay persistent disabled :model-value="showOverlay" class="align-center justify-center">
+    <v-progress-circular color="primary" size="48" indeterminate></v-progress-circular>
+  </v-overlay>
+
 </template>
 
 <script setup>
@@ -241,6 +246,8 @@ const confirmarShow = ref(false);
 const confirmarTitulo = ref("");
 const confirmarMensaje = ref("");
 
+const showOverlay = ref(false)
+
 // Composables
 const { getCategorias, updateCategoria, insertCategoria, removeCategoria } =
   useCategoria();
@@ -308,7 +315,9 @@ async function onSubmitCategoria() {
   if (!formCategoria.value) return;
 
   try {
+    showOverlay.value = true;
     await saveCategoria();
+    showOverlay.value = false;
   } catch (error) {
     dialogShow.value = true;
     dialogTitulo.value = "Categoría";
@@ -320,7 +329,9 @@ async function onSubmitItem() {
   if (!formItem.value) return;
 
   try {
+    showOverlay.value = true;
     await saveItem();
+    showOverlay.value = false;
   } catch (error) {
     dialogShow.value = true;
     dialogTitulo.value = "Item";
@@ -367,9 +378,11 @@ async function deleteCategoria(categoria) {
 async function confirmarAceptar() {
   try {
     confirmarShow.value = false;
+    showOverlay.value = true;
     await removeCategoria(recordCategoria.value.id);
     categoriasStore.categorias = await getCategorias();
     await getMenuData();
+    showOverlay.value = false;
   } catch (error) {
     dialogShow.value = true;
     dialogTitulo.value = "Categoría";
@@ -393,9 +406,11 @@ async function deleteCategoria(id) {
 
 async function deleteItem(id) {
   try {
+    showOverlay.value = true;
     await removeItem(id);
     categoriasStore.categorias = await getCategorias();
     await getMenuData();
+    showOverlay.value = false;
   } catch (error) {
     dialogShow.value = true;
     dialogTitulo.value = "Item";

@@ -67,6 +67,11 @@
   <Confirm :show="confirmarShow" :titulo="confirmarTitulo" :mensaje="confirmarMensaje"
     @confirmarCerrar="confirmarShow = false" @confirmarAceptar="confirmarAceptar">
   </Confirm>
+
+  <v-overlay persistent disabled :model-value="showOverlay" class="align-center justify-center">
+    <v-progress-circular color="primary" size="48" indeterminate></v-progress-circular>
+  </v-overlay>
+
 </template>
 
 <script setup>
@@ -80,7 +85,9 @@ import Confirm from '@/components/Confirm.vue';
 import { useCategoria } from '@/composables/categorias';
 import { useErrorHandler } from '@/composables/errorHandler';
 import { useReglas } from "@/composables/reglas";
+import { useMenu } from "@/composables/menu";
 // Stores
+import { useEmpresaStore } from "@/stores/empresa";
 import { useCategoriasStore } from "@/stores/categorias";
 
 const categoriasStore = useCategoriasStore()
@@ -104,11 +111,15 @@ const dialogTitulo = ref('');
 const confirmarShow = ref(false);
 const confirmarTitulo = ref('');
 const confirmarMensaje = ref('');
+const showOverlay = ref(false)
 
 // Composables
 const { getCategorias, updateCategoria, insertCategoria, removeCategoria } =
   useCategoria();
 const { rules } = useReglas();
+const { getMenu } = useMenu();
+// Stores
+const empresaStore = useEmpresaStore()
 
 onMounted(async () => {
   listaCategorias.value = categoriasStore.categorias;
@@ -152,8 +163,11 @@ async function remove(categoria) {
 async function confirmarAceptar() {
   try {
     confirmarShow.value = false;
+    showOverlay.value = true;
     await removeCategoria(record.value.id);
-    categoriasStore.categorias = await getCategorias();
+    categoriasStore.categorias = await getCategorias(empresaStore.empresa.id);
+    menuStore.menu = await getMenu();
+    showOverlay.value = false;
   } catch (error) {
     dialogShow.value = true;
     dialogMensaje.value = useErrorHandler(error);
@@ -176,7 +190,11 @@ async function onSubmit() {
   if (!form.value) return;
 
   try {
+    showOverlay.value = true;
     await save();
+    categoriasStore.categorias = await getCategorias(empresaStore.empresa.id);
+    menuStore.menu = await getMenu();
+    showOverlay.value = false;
   } catch (error) {
     dialogShow.value = true;
     dialogMensaje.value = useErrorHandler(error);
@@ -193,8 +211,6 @@ async function save() {
       };
       await insertCategoria(newCategoria);
     }
-    categoriasStore.categorias = await getCategorias();
-
     dialog.value = false;
   } catch (error) {
     dialog.value = false;

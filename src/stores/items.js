@@ -4,6 +4,7 @@ import { ref } from 'vue';
 export const useItemsStore = defineStore('items', () => {
     // Estados
     const items = ref([])
+    const sugeridos = ref([])
 
     // Getters
 
@@ -11,5 +12,6 @@ export const useItemsStore = defineStore('items', () => {
 
     return {
         items,
+        sugeridos,
     }
 })

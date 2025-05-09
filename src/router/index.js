@@ -69,6 +69,7 @@ import MenuAbm from '@/pages/Admin/MenuAbm.vue'
 import NewPass from '@/pages/Admin/NewPass.vue'
 import PageNotFound from '@/pages/Admin/PageNotFound.vue'
 import SignUp from '@/pages/Admin/SignUp.vue'
+import SugerenciaAbm from '@/pages/Admin/SugerenciaAbm.vue'
 
 // Composables
 const { nombreApp } = useAplicacion();
@@ -136,6 +137,11 @@ const routes = [
     path: '/galeriaabm',
     component: GaleriaAbm,
   },
+  {
+    path: '/sugerenciaabm',
+    component: SugerenciaAbm,
+  },
+  
   {
     path: '/acerca',
     component: Acerca,

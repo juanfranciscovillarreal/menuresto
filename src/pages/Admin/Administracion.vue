@@ -105,6 +105,7 @@ const links = ref([
   ["Items", "mdi-order-bool-descending-variant", "/Item"],
   ["Menu", "mdi-silverware-variant", "/MenuAbm"],
   ["Galería", "mdi-image-multiple-outline", `/GaleriaAbm`],
+  ["Sugerencias", "mdi-message-bulleted", `/SugerenciaAbm`],
   ["Divider", "", ""],
   ["Configuracion", "mdi-cog", "/Configuracion"],
 ])

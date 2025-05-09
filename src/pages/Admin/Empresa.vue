@@ -106,7 +106,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
-import { supabase } from '@/lib/supabase'
 // Components
 import ToolBar from '@/components/ToolBar.vue';
 import Dialog from '@/components/Dialog.vue';
@@ -147,15 +146,6 @@ async function onSubmit() {
   if (!form.value) return;
 
   try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user == null) {
-      //router.push('/');
-      throw 'Error';
-    }
-
     let empresa = {
       id: user.id,
       nombre: empresaStore.empresa.nombre,

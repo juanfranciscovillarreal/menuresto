@@ -47,5 +47,18 @@ export function useItem() {
     return data;
   }
 
-  return { getItems, updateItem, insertItem, removeItem };
+  async function getSugeridos(id) {
+    debugger
+    let { data, error, status } = await supabase
+    .from('Item')
+    .select('id, nombre, descripcion, id_categoria, precio, foto')
+    .eq('user_id', id)
+    .eq('sugerido', true)
+    .order('nombre', { ascending: true });
+
+    if (error) throw error;
+    return data;
+  }
+
+  return { getItems, updateItem, insertItem, removeItem, getSugeridos };
 }

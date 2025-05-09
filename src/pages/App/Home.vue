@@ -149,6 +149,7 @@ import Buscar from '@/components/Buscar.vue';
 import { useErrorHandler } from '@/composables/errorHandler'
 import { useEmpresa } from '@/composables/empresa';
 import { useCategoria } from '@/composables/categorias';
+import { useItem } from '@/composables/items';
 import { useMenu } from '@/composables/menu';
 import { useAplicacion } from '@/composables/aplicacion';
 import { useContacto } from '@/composables/contacto';
@@ -156,6 +157,7 @@ import { useHorario } from '@/composables/horario';
 import { useGaleria } from '@/composables/galeria';
 // Stores
 import { useCategoriasStore } from "@/stores/categorias";
+import { useItemsStore } from "@/stores/items";
 import { useMenuStore } from "@/stores/menu";
 import { useEmpresaStore } from "@/stores/empresa";
 import { useContactoStore } from "@/stores/contacto";
@@ -165,6 +167,7 @@ import { useGaleriaStore } from "@/stores/galeria";
 // Composables
 const { getEmpresaPorNombre } = useEmpresa();
 const { getCategorias } = useCategoria();
+const { getSugeridos } = useItem();
 const { getMenu } = useMenu();
 const { getContacto } = useContacto();
 const { getHorario } = useHorario();
@@ -182,6 +185,7 @@ const varios = ref([])
 
 // Stores
 const categoriasStore = useCategoriasStore()
+const itemsStore = useItemsStore()
 const menuStore = useMenuStore()
 const empresaStore = useEmpresaStore()
 const contactoStore = useContactoStore()
@@ -194,6 +198,7 @@ onMounted(async () => {
   await getContactoData();
   await getHorarioData();
   await getCategoriasData();
+  await getSugeridosData();
   await getGaleriaData();
   await getMenuData();
 })
@@ -244,6 +249,10 @@ async function getCategoriasData() {
       });
       categoriasStore.categorias = data;
     });
+}
+
+async function getSugeridosData() {
+    itemsStore.sugeridos = await getSugeridos(empresaStore.empresa.id);
 }
 
 async function getMenuData() {
